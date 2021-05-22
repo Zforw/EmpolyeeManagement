@@ -1,7 +1,10 @@
 package pers.zforw.empmgr.empolyee;
 
-import javax.swing.plaf.IconUIResource;
+import pers.zforw.empmgr.main.SysLog;
+
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
@@ -18,42 +21,58 @@ import java.util.ArrayList;
  */
 public class HR {
 
-    private int cnt;
+    private int size;
+    static private String[] root;
     ArrayList<Empolyee> emp = new ArrayList<>(1024);
-    /**
-     * @description:
-     * @param: [filePath] 数据文件目录
-     * @return: void
-     */
-    public HR(String[] buf, int count) {
-        cnt = count;
-        for(int i = 1; i <= count;i++) {
-            add(buf[i]);
-        }
+    public HR(ArrayList<Empolyee> e) {
+        emp = e;
+        size = e.size();
     }
-    public int find(String name) {
-        int pos = -1, i = 0;
+    public HR() {
+        size = 0;
+    }
+    /**
+     * @description: 通过姓名查找
+     * @param: [name]
+     * @return:
+     */
+    public ArrayList<Integer> find(String name) {
+        int i = 0;
+        ArrayList<Integer> list = new ArrayList<>();
         for(Empolyee e : emp) {
-            if(e.getName().equals(name)) {
-                pos = i;
+            if(e.getName().equals(name) && e.isAtPost()) {
+                list.add(i);
             }
             i++;
         }
-        return pos;
+        return list.size() > 0?list:null;
     }
-    public int find(int id) {
-        int pos = -1, i = 0;
+    public ArrayList<Integer> find(int id) {
+        int i = 0;
+        ArrayList<Integer> list = new ArrayList<>();
         for(Empolyee e : emp) {
             if(e.getId() == id && e.isAtPost()) {
-                pos = i;
+                list.add(i);
             }
             i++;
         }
-        return pos;
+        return list.size() > 0?list:null;
     }
     public boolean add(String info) {
-        Empolyee e = new Empolyee(info);
-        if(find(e.getId()) != -1)
+        Empolyee e;
+        String[] args = Split(info);
+        if(args[3].equals("开发")) {
+            e = new Technician(info);
+        } else if(args[3].equals("销售")) {
+            if (args[4].equals("经理")) {
+                e = new SalesClerk(info);
+            } else {
+                e = new SalesManager(info);
+            }
+        } else {
+            e = new Manager(info);
+        }
+        if(find(e.getId()) != null)
             return false;
         emp.add(e);
         return true;
@@ -63,34 +82,76 @@ public class HR {
             return false;
         }
         emp.remove(pos);
+        size--;
         return true;
     }
-    public boolean modifySaly(int pos, int salary) {
-        emp.get(pos).setSalary(salary);
-        return true;
-    }
-    public boolean modifyPass(int pos, String password) {
-        emp.get(pos).setPassword(password);
-        return true;
-    }
-    public boolean modifyBra(int pos, String branch) {
-        emp.get(pos).setBranch(branch);
-        return true;
-    }
-    public boolean modifyRank(int pos, String rank) {
-        emp.get(pos).setRank(rank);
-        return true;
-    }
-    public String[] save() {
-        String[] str = new String[1024];
-        int i = 0;
-        for(Empolyee e : emp) {
-            str[i++] = e.toString();
-        }
-        return str;
+    public int getSize() {
+        return size;
     }
 
-    public void getNum() {
-        System.out.println(Empolyee.getMale() + "," + Empolyee.getMale());
+    public Empolyee get(int p) {
+        return emp.get(p);
+    }
+
+    public String[] openFile(String filePath) throws IOException {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
+            String[] bufString = new String[1024];
+            String line;
+            size = 0;
+            root = Split(br.readLine());
+            System.out.println(root[0] + root[1]);
+            while ((line = br.readLine()) != null) {
+                bufString[size++] = line;
+            }
+            br.close();//关闭文件
+            for (int i = 0; i < size; i++) {
+                add(bufString[i]);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            SysLog.writeFile("data.txt File not found.");
+        }
+        return root;
+    }
+    public void saveFile(String fileName) {
+        try {
+            OutputStream os = new FileOutputStream(fileName);
+            PrintWriter pw = new PrintWriter(os);
+            pw.println(root[0] + " " + root[1]);
+            String[] buf = new String[1024];
+            int i = 0;
+            for(Empolyee e : emp) {
+                buf[i++] = e.toString();
+            }
+            for (i = 0; i < size; i++) {
+                pw.println(buf[i]);
+            }
+            pw.close();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public String getNum() {
+        return String.format("total: %d, %d male, %d female\nManager: %d, SalesManager: %d\nTechnician: %d, SalesClerk: %d",
+                Empolyee.getTot(), Empolyee.getMale(), Empolyee.getFemale(),
+                Manager.getTotal(), SalesManager.getTotal(), Technician.getTotal(), SalesClerk.getTotal());
+    }
+    /**
+     * @description:
+     * @param: [str]
+     * @return:
+     */
+    public static String[] Split(String str) {
+        String[] result = str.split(" ");
+        for (int i = 0; i < result.length; i++) {
+            if (result[i].length() == 0 && i < result.length - 1) {
+                String t = result[i];
+                result[i] = result[i + 1];
+                result[i + 1] = t;
+            }
+        }
+        return result;
     }
 }

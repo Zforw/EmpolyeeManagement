@@ -10,13 +10,18 @@ import org.jetbrains.annotations.NotNull;
  * @description:
  */
 public class Technician extends Empolyee{
-    private int total = 0;
+    private static int total = 0;
     public Technician(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
         super(name, gender, id, branch, rank, salary, password);
         total++;
     }
 
-    public int getTotal() {
+    public Technician(String info) {
+        super(info);
+        total++;
+    }
+
+    public static int getTotal() {
         return total;
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @description:
  */
 public class Empolyee {
+    private static int tot = 0;
     static protected int male = 0;
     static protected int female = 0;
     protected int id;
@@ -30,6 +31,7 @@ public class Empolyee {
         this.salary = salary;
         this.password = password;
         this.atPost = true;
+        tot++;
         if (gender.equals("男")) {
             male++;
         } else {
@@ -37,17 +39,7 @@ public class Empolyee {
         }
     }
     public Empolyee(String info) {
-        String[] array = info.split(" ");
-        for(int i = 0; i < array.length;i++) {
-            /**
-             *  避免出现多个空格的情况
-             */
-            if(array[i].length() == 0 && i < array.length - 1) {
-                String t = array[i];
-                array[i] = array[i + 1];
-                array[i + 1] = t;
-            }
-        }
+        String[] array = HR.Split(info);
         this.atPost = true;
         this.name = array[0];
         this.gender = array[1];
@@ -56,6 +48,7 @@ public class Empolyee {
         } else {
             female++;
         }
+        tot++;
         this.id = Integer.parseInt(array[2]);
         this.branch = array[3];
         this.rank = array[4];
@@ -92,6 +85,7 @@ public class Empolyee {
     public void setRank(String rank) {
         this.rank = rank;
     }
+
     public static int getMale() {
         return male;
     }
@@ -127,6 +121,8 @@ public class Empolyee {
     public String getRank() {
         return rank;
     }
+
+    public static int getTot() { return tot; }
 
     public boolean isAtPost() {
         return atPost;
