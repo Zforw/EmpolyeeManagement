@@ -1,0 +1,10 @@
+[2021-05-22 16:02:14]log.txt not exists, create a new file.
+[2021-05-22 16:02:40]su logged in.
+[2021-05-22 16:03:07]su logged in.
+[2021-05-22 16:03:29]su logged in.
+[2021-05-22 16:06:03]su logged in.
+[2021-05-22 16:06:51]su logged in.
+[2021-05-22 16:08:33]su logged in.
+[2021-05-22 16:10:09]su logged in.
+[2021-05-22 16:11:43]su logged in.
+[2021-05-22 16:14:27]su logged in.
