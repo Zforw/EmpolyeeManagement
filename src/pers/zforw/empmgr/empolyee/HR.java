@@ -58,9 +58,22 @@ public class HR {
         }
         return list.size() > 0?list:null;
     }
+    public ArrayList<Integer> find(String name, int id) {
+        int i = 0;
+        ArrayList<Integer> list = new ArrayList<>();
+        for(Empolyee e : emp) {
+            if((e.getId() == id || e.getName().equals(name)) && e.isAtPost()) {
+                list.add(i);
+            }
+            i++;
+        }
+        return list.size() > 0?list:null;
+    }
     public boolean add(String info) {
         Empolyee e;
         String[] args = Split(info);
+        if(find(Integer.parseInt(args[2])) != null)
+            return false;
         if(args[3].equals("开发")) {
             e = new Technician(info);
         } else if(args[3].equals("销售")) {
@@ -72,8 +85,6 @@ public class HR {
         } else {
             e = new Manager(info);
         }
-        if(find(e.getId()) != null)
-            return false;
         emp.add(e);
         return true;
     }
@@ -110,7 +121,7 @@ public class HR {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            SysLog.writeFile("data.txt File not found.");
+            SysLog.log("data.txt File not found.");
         }
         return root;
     }

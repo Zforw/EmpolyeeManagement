@@ -66,7 +66,7 @@ public class Empolyee {
      * @return: 
      */
 
-    public String getInfo() {
+    protected String getInfo() {
         return String.format("姓名:%s,性别:%s,ID:%s,部门:%s,级别:%s,薪资:%s", name, gender, id, branch, rank, salary);
     }
 
@@ -74,7 +74,7 @@ public class Empolyee {
         this.salary = salary;
     }
 
-    public void setPassword(String password) {
+    protected void setPassword(String password) {
         this.password = password;
     }
 
@@ -102,7 +102,7 @@ public class Empolyee {
         return salary;
     }
 
-    public String getPassword() {
+    protected String getPassword() {
         return password;
     }
 

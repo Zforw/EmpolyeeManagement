@@ -33,7 +33,7 @@ public class SysLog {
      * @param: [content]
      * @return: void
      */
-    public static void writeFile(String content) {
+    public static void log(String content) {
 
         // 在文件夹目录下新建文件
         File file = new File("/Users/zforw/IdeaProjects/Basic/src/log.txt");
