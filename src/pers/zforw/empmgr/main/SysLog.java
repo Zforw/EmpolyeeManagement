@@ -34,9 +34,7 @@ public class SysLog {
      * @return: void
      */
     public static void log(String content) {
-
-        // 在文件夹目录下新建文件
-        File file = new File("/Users/zforw/IdeaProjects/Basic/src/log.txt");
+        File file = new File(Main.filePath + "/log.txt");
 
         FileOutputStream fos = null;
         OutputStreamWriter osw = null;

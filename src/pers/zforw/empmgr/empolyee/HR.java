@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 
 /**
@@ -47,16 +48,15 @@ public class HR {
         }
         return list.size() > 0?list:null;
     }
-    public ArrayList<Integer> find(int id) {
+    public int find(int id) {
         int i = 0;
-        ArrayList<Integer> list = new ArrayList<>();
         for(Empolyee e : emp) {
-            if(e.getId() == id && e.isAtPost()) {
-                list.add(i);
+            if (e.getId() == id && e.isAtPost()) {
+                return i;
             }
             i++;
         }
-        return list.size() > 0?list:null;
+        return -1;
     }
     public ArrayList<Integer> find(String name, int id) {
         int i = 0;
@@ -72,7 +72,7 @@ public class HR {
     public boolean add(String info) {
         Empolyee e;
         String[] args = Split(info);
-        if(find(Integer.parseInt(args[2])) != null)
+        if(find(Integer.parseInt(args[2])) != -1)
             return false;
         if(args[3].equals("开发")) {
             e = new Technician(info);
@@ -86,6 +86,7 @@ public class HR {
             e = new Manager(info);
         }
         emp.add(e);
+        emp.sort((o1, o2) -> (o1.getId() < o2.getId()) ? -1 : 1);
         return true;
     }
     public boolean delete(int pos) {
@@ -111,11 +112,10 @@ public class HR {
             String line;
             size = 0;
             root = Split(br.readLine());
-            System.out.println(root[0] + root[1]);
             while ((line = br.readLine()) != null) {
                 bufString[size++] = line;
             }
-            br.close();//关闭文件
+            br.close();
             for (int i = 0; i < size; i++) {
                 add(bufString[i]);
             }
@@ -144,19 +144,20 @@ public class HR {
             e.printStackTrace();
         }
     }
-    public String getNum() {
-        return String.format("total: %d, %d male, %d female\nManager: %d, SalesManager: %d\nTechnician: %d, SalesClerk: %d",
+    public static String getNum() {
+        return String.format("共有: %d 人, %d 男, %d 女\n经理: %d 人, 销售经理: %d 人\n技术人员: %d 人, 销售人员: %d 人",
                 Empolyee.getTot(), Empolyee.getMale(), Empolyee.getFemale(),
                 Manager.getTotal(), SalesManager.getTotal(), Technician.getTotal(), SalesClerk.getTotal());
     }
     /**
-     * @description:
+     * @description: 用空格将字符串分割
      * @param: [str]
      * @return:
      */
     public static String[] Split(String str) {
         String[] result = str.split(" ");
         for (int i = 0; i < result.length; i++) {
+            /* 当两个子字符串之间多于一个空格的情况 */
             if (result[i].length() == 0 && i < result.length - 1) {
                 String t = result[i];
                 result[i] = result[i + 1];
