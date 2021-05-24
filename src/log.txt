@@ -596,3 +596,75 @@
 [2021-05-24 18:00:21]file data.txt not found
 [2021-05-24 18:02:00]file data.txt not found
 /Users/zforw/IdeaProjects/Basic/src/data.txt (No such file or directory)
+[2021-05-24 18:55:16]/Users/zforw/IdeaProjects/Basic/src/data.txt (No such file or directory)
+[2021-05-24 18:57:24]/Users/zforw/IdeaProjects/Basic/src/data.txt (No such file or directory)
+[2021-05-24 18:57:49]load file data.txt
+[2021-05-24 18:57:52]su logged in
+[2021-05-24 18:58:25]su logged out
+[2021-05-24 18:58:25]store file output.txt
+[2021-05-24 19:01:54]load file data.txt
+[2021-05-24 19:01:57]store file output.txt
+[2021-05-24 19:02:02]load file data.txt
+[2021-05-24 19:02:05]su logged in
+[2021-05-24 19:02:24]su logged out
+[2021-05-24 19:02:24]store file output.txt
+[2021-05-24 19:04:38]load file data.txt
+[2021-05-24 19:04:45]su logged in
+[2021-05-24 19:05:32]su logged out
+[2021-05-24 19:05:32]store file output.txt
+[2021-05-24 19:06:06]load file data.txt
+[2021-05-24 19:06:16]su logged in
+[2021-05-24 19:06:20]su logged out
+[2021-05-24 19:06:20]store file output.txt
+[2021-05-24 19:06:26]load file data.txt
+[2021-05-24 19:06:29]su logged in
+[2021-05-24 19:16:53]load file data.txt
+[2021-05-24 19:16:56]su logged in
+[2021-05-24 19:17:05]su logged out
+[2021-05-24 19:17:05]store file output.txt
+[2021-05-24 22:29:39]load file data.txt
+[2021-05-24 22:29:42]su logged in
+[2021-05-24 22:29:55]su logged out
+[2021-05-24 22:29:55]store file output.txt
+[2021-05-24 22:30:56]load file data.txt
+[2021-05-24 22:31:40]su logged in
+[2021-05-24 22:31:52]su logged out
+[2021-05-24 22:31:52]store file output.txt
+[2021-05-24 22:32:47]load file data.txt
+[2021-05-24 22:32:50]su logged in
+[2021-05-24 22:32:56]su logged out
+[2021-05-24 22:32:56]store file output.txt
+[2021-05-24 23:01:18]load file data.txt
+[2021-05-24 23:01:21]su logged in
+[2021-05-24 23:01:29]su logged out
+[2021-05-24 23:01:29]store file output.txt
+[2021-05-24 23:03:31]load file data.txt
+[2021-05-24 23:03:34]su logged in
+[2021-05-24 23:03:41]su logged out
+[2021-05-24 23:03:41]store file output.txt
+[2021-05-24 23:04:25]load file data.txt
+[2021-05-24 23:04:27]su logged in
+[2021-05-24 23:04:37]su logged out
+[2021-05-24 23:04:37]store file output.txt
+[2021-05-24 23:07:30]load file data.txt
+[2021-05-24 23:07:32]su logged in
+[2021-05-24 23:07:38]su logged out
+[2021-05-24 23:07:38]store file output.txt
+[2021-05-24 23:10:39]load file data.txt
+[2021-05-24 23:10:41]su logged in
+[2021-05-24 23:11:00]su logged out
+[2021-05-24 23:11:00]store file output.txt
+[2021-05-24 23:20:11]load file data.txt
+[2021-05-24 23:20:13]su logged in
+[2021-05-24 23:20:25]find 9
+[2021-05-24 23:20:37]find Text {} 900
+[2021-05-24 23:20:40]su logged out
+[2021-05-24 23:20:40]store file output.txt
+[2021-05-24 23:21:22]load file data.txt
+[2021-05-24 23:21:24]su logged in
+[2021-05-24 23:21:30]su logged out
+[2021-05-24 23:21:30]store file output.txt
+[2021-05-24 23:24:34]load file data.txt
+[2021-05-24 23:26:32]su logged in
+[2021-05-24 23:26:38]su logged out
+[2021-05-24 23:26:38]store file output.txt

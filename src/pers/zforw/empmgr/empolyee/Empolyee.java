@@ -15,7 +15,6 @@ public class Empolyee {
     static protected int female = 0;
     protected int id;
     protected int salary;
-    protected boolean atPost;
     protected String password;
     protected String name;
     protected String gender;
@@ -30,7 +29,6 @@ public class Empolyee {
         this.rank = rank;
         this.salary = salary;
         this.password = password;
-        this.atPost = true;
         tot++;
         if (gender.equals("男")) {
             male++;
@@ -40,7 +38,6 @@ public class Empolyee {
     }
     public Empolyee(String info) {
         String[] array = HR.Split(info);
-        this.atPost = true;
         this.name = array[0];
         this.gender = array[1];
         if (gender.equals("男")) {
@@ -66,9 +63,6 @@ public class Empolyee {
      * @return: 
      */
 
-    protected String getInfo() {
-        return String.format("姓名:%s,性别:%s,ID:%s,部门:%s,级别:%s,薪资:%s", name, gender, id, branch, rank, salary);
-    }
 
     public void setSalary(int salary) {
         this.salary = salary;
@@ -124,12 +118,5 @@ public class Empolyee {
 
     public static int getTot() { return tot; }
 
-    public boolean isAtPost() {
-        return atPost;
-    }
-
-    public void expel() {
-        this.atPost = false;
-    }
 
 }

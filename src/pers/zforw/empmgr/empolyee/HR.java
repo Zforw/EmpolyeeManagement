@@ -1,15 +1,13 @@
 package pers.zforw.empmgr.empolyee;
 
-import pers.zforw.empmgr.main.SysLog;
-
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * @version: 1.0
@@ -22,7 +20,7 @@ public class HR {
 
     private int size;
     static private String[] root;
-    ArrayList<Empolyee> emp = new ArrayList<>(1024);
+    ArrayList<Empolyee> emp = new ArrayList<>();
     public HR(ArrayList<Empolyee> e) {
         emp = e;
         size = e.size();
@@ -39,7 +37,7 @@ public class HR {
         int i = 0;
         ArrayList<Integer> list = new ArrayList<>();
         for(Empolyee e : emp) {
-            if(e.getName().equals(name) && e.isAtPost()) {
+            if(e.getName().equals(name)) {
                 list.add(i);
             }
             i++;
@@ -55,7 +53,7 @@ public class HR {
     public int find(int id) {
         int i = 0;
         for(Empolyee e : emp) {
-            if (e.getId() == id && e.isAtPost()) {
+            if (e.getId() == id) {
                 return i;
             }
             i++;
@@ -66,7 +64,7 @@ public class HR {
         int i = 0;
         ArrayList<Integer> list = new ArrayList<>();
         for(Empolyee e : emp) {
-            if((e.getId() == id || e.getName().equals(name)) && e.isAtPost()) {
+            if((e.getId() == id || e.getName().equals(name))) {
                 list.add(i);
             }
             i++;
@@ -101,7 +99,7 @@ public class HR {
             e = new Manager(info);
         }
         emp.add(e);
-        emp.sort((o1, o2) -> (o1.getId() < o2.getId()) ? -1 : 1);
+        emp.sort(Comparator.comparingInt(Empolyee::getId));
         return true;
     }
     public void delete(int pos) {
@@ -122,17 +120,12 @@ public class HR {
      */
     public String[] openFile(String filePath) throws IOException{
         BufferedReader br = new BufferedReader(new FileReader(filePath));
-        String[] bufString = new String[1024];
         String line;
-        int p = 0;
         root = Split(br.readLine());
         while ((line = br.readLine()) != null) {
-            bufString[p++] = line;
+            add(line);
         }
         br.close();
-        for (int i = 0; i < p; i++) {
-            add(bufString[i]);
-        }
         return root;
     }
     /**
@@ -144,7 +137,7 @@ public class HR {
         OutputStream os = new FileOutputStream(fileName);
         PrintWriter pw = new PrintWriter(os);
         pw.println(root[0] + " " + root[1]);
-        String[] buf = new String[1024];
+        String[] buf = new String[size];
         int i = 0;
         for(Empolyee e : emp) {
             buf[i++] = e.toString();
@@ -162,13 +155,14 @@ public class HR {
     }
     /**
      * @description: 用空格将字符串分割
+     *      用于处理当两个子字符串之间多于一个空格的特殊情况
      * @param: [str]
      * @return:
      */
     public static String[] Split(String str) {
         String[] result = str.split(" ");
         for (int i = 0; i < result.length; i++) {
-            /* 当两个子字符串之间多于一个空格的情况 */
+            /*  */
             if (result[i].length() == 0 && i < result.length - 1) {
                 String t = result[i];
                 result[i] = result[i + 1];
