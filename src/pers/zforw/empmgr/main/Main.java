@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import pers.zforw.empmgr.empolyee.Empolyee;
 import pers.zforw.empmgr.empolyee.HR;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -36,7 +37,14 @@ public class Main {
     protected final static String filePath = "/Users/zforw/IdeaProjects/Basic/src";
 
     public static void main(String[] args) throws IOException {
-        root = hr.openFile(filePath + "/data.txt");
+        MessageBox msg = new MessageBox(logShell, SWT.ICON_WARNING | SWT.YES);
+        try {
+            root = hr.openFile(filePath + "/data.txt");
+        } catch (IOException e) {
+            msg.setMessage(e.getMessage());
+            msg.open();
+            return;
+        }
         login();
         logShell.open();
 
@@ -48,8 +56,9 @@ public class Main {
         if (!display.isDisposed()) {
             display.dispose();
         }
-        if (isLogin) SysLog.log(root[0] + " logged out.");
+        if (isLogin) SysLog.log(root[0] + " logged out");
         hr.saveFile( filePath + "/output.txt");
+        SysLog.log("store file output.txt");
     }
     private static void login() {
         logShell.setBounds(570, 200, 350, 300);
@@ -142,7 +151,7 @@ public class Main {
             msg.open();
 
             isLogin = true;
-            SysLog.log(name + " logged in.");
+            SysLog.log(name + " logged in");
 
             mainShell.open();
             initMainShell();
@@ -242,10 +251,13 @@ public class Main {
                 ArrayList<Integer> findList = new ArrayList<>();
                 if(name.length() != 0 && id.length() != 0) {
                     findList = hr.find(name, Integer.parseInt(id));
+                    SysLog.log("find " + name + " " + id);
                 } else if (id.length() != 0){
                     findList.add(hr.find(Integer.parseInt(id)));
+                    SysLog.log("find " + id);
                 } else {
                     findList = hr.find(name);
+                    SysLog.log("find " + name);
                 }
                 if (findList == null || findList.get(0) == -1) {
                     MessageBox msg = new MessageBox(mainShell, SWT.ICON_WARNING | SWT.YES );
@@ -272,7 +284,7 @@ public class Main {
                 table.removeAll();
                 for (int i = 0;i < hr.getSize();i++) {
                     Empolyee empolyee = hr.get(i);
-                    TableItem item = new TableItem(table,SWT.NONE);
+                    TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[]{empolyee.getName(), empolyee.getGender(),String.valueOf(empolyee.getId()),
                             empolyee.getBranch(), empolyee.getRank(), String.valueOf(empolyee.getSalary())});
                 }
@@ -283,13 +295,14 @@ public class Main {
         deleteButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                if (table.getSelectionCount() == 0) return;
                 MessageBox msg = new MessageBox(mainShell, SWT.ICON_WARNING | SWT.NO | SWT.YES);
                 TableItem[] tableItem = table.getSelection();
                 TableItem t = table.getItem(table.getSelectionIndex());
                 msg.setMessage("是否要删除 " + tableItem[0].getText());
                 int rc = msg.open();
                 if (rc == SWT.YES) {
-                    SysLog.log("delete " + t.getText() + " " + t.getText(2) + ".");
+                    SysLog.log("delete " + t.getText() + " " + t.getText(2));
                     hr.delete(hr.find(Integer.parseInt(t.getText(2))));
                     table.remove(table.getSelectionIndex());
                 }
@@ -302,7 +315,7 @@ public class Main {
         });
 
         Button addButton = new Button(group2, SWT.NONE);
-        addButton.setBounds(80, 250, 70, 20);
+        addButton.setBounds(80, 290, 70, 20);
         addButton.setText("添加");
         Label nLabel = new Label(group2, SWT.NONE);
         nLabel.setText("姓名:");
@@ -338,38 +351,29 @@ public class Main {
         Label pLabel = new Label(group2, SWT.NONE);
         pLabel.setText("密码:");
         pLabel.setBounds(20, 200, 90, 20);
-        final Text[] password = {new Text(group2, SWT.PASSWORD)};
-        password[0].setBounds(120, 200, 90, 20);
-        Button visualPass = new Button(group2, SWT.CHECK);
-        visualPass.setText("可见");
-        visualPass.setBounds(220, 200, 50, 20);
-        final boolean[] visualFlag = {false};
+        Text password = new Text(group2, SWT.PASSWORD);
+        password.setBounds(120, 200, 90, 20);
+        Label npLabel = new Label(group2, SWT.NONE);
+        npLabel.setText("再次确认密码:");
+        npLabel.setBounds(20, 230, 120, 20);
+        Text nPassword = new Text(group2, SWT.PASSWORD);
+        nPassword.setBounds(120, 230, 90, 20);
+        Label eLabel = new Label(group2, SWT.NONE);
+        eLabel.setBounds(220, 230, 120, 20);
 
-        visualPass.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                String pwd = password[0].getText();
-                //password[0].dispose();
-                if (!visualFlag[0]) {
-                    /*
-                    password[0] = new Text(group2, SWT.NONE);
-                    password[0].setBounds(120, 200, 90, 20);
-                    password[0].setText(pwd);
-                    visualFlag[0] = true;
-
-                     */
-                    password[0].setEchoChar(' ');
-                } else {
-                    password[0] = new Text(group2, SWT.PASSWORD);
-                    password[0].setBounds(120, 200, 90, 20);
-                    password[0].setText(pwd);
-                    visualFlag[0] = false;
-                }
+        nPassword.addModifyListener(modifyEvent -> {
+            if (password.getText().length() == 0) {
+                eLabel.setText("密码不能为空");
+            } else if(!password.getText().equals(nPassword.getText())) {
+                eLabel.setText("两次输入的密码不一致");
+            } else {
+                eLabel.setText("✅");
             }
         });
+
         Combo combo = new Combo(group2, SWT.DROP_DOWN | SWT.READ_ONLY);
         combo.setItems("经理", "销售经理", "销售人员", "技术人员");
-        combo.setBounds(116, 230, 100, 30);
+        combo.setBounds(116, 270, 100, 30);
         combo.select(0);
 
         combo.addSelectionListener(new SelectionAdapter() {
@@ -394,15 +398,45 @@ public class Main {
         addButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                MessageBox m = new MessageBox(mainShell, SWT.OK);
-                m.setText(password[0].getText());
-                hr.add(name + " " + gender.getItem(gender.getSelectionIndex()) + " " + id + " " + branch + " " +
-                        rank + " " + salary + " " + password[0]);
+                if (name.getText().length() == 0) {
+                    npLabel.setText("姓名不能为空！");
+                } else if (id.getText().length() == 0) {
+                    npLabel.setText("工号不能为空！");
+                } else if (salary.getText().length() == 0) {
+                    npLabel.setText("工资不能为空！");
+                } else if (!password.getText().equals(nPassword.getText())) {
+                    npLabel.setText("两次输入的密码不相等！");
+                } else if (password.getText().length() == 0) {
+                    npLabel.setText("密码不能为空！");
+                } else {
+                    String info =  name.getText() + " " + gender.getItem(gender.getSelectionIndex()) + " " + id.getText()
+                            + " " + branch.getText() + " " +
+                            rank.getText() + " " + salary.getText() + " " + password.getText();
+                    boolean p = hr.add(info);
+                    MessageBox msg = new MessageBox(mainShell, SWT.YES);
+                    if (p) {
+                        msg.setMessage("添加成功！");
+                        SysLog.log("add " + info);
+                    } else {
+                        msg.setMessage("工号重复！");
+                    }
+                    msg.open();
+                }
             }
         });
 
-        tabAdd.addListener(0, event -> {
-
+        /*
+         * @description: TO-DO make all group2 in mainShell
+         * @param: []
+         * @return:
+         */
+        folder.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (folder.getSelectionIndex() == 2) {
+                    countLabel.setText(HR.getNum());
+                }
+            }
         });
         tabEdit.setControl(group1);
         tabAdd.setControl(group2);

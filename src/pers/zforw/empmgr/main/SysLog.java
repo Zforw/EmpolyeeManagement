@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * @version: 1.0
@@ -44,7 +42,7 @@ public class SysLog {
             if (!file.exists()) {
                 boolean hasFile = file.createNewFile();
                 if (hasFile) {
-                    str = getDate() + "log.txt not exists, create a new file.";
+                    str = getDate() + "log.txt not exists, create a new file";
                 }
                 fos = new FileOutputStream(file);
             } else {

@@ -10,8 +10,6 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Comparator;
-
 
 /**
  * @version: 1.0
@@ -48,6 +46,12 @@ public class HR {
         }
         return list.size() > 0?list:null;
     }
+    /**
+     * @description:
+     *      返回id所在emp内的位置，-1为不存在
+     * @param: [id]
+     * @return:
+     */
     public int find(int id) {
         int i = 0;
         for(Empolyee e : emp) {
@@ -69,11 +73,22 @@ public class HR {
         }
         return list.size() > 0?list:null;
     }
+    /**
+     * @description: 添加人员
+     *      1.将信息进行分割
+     *      2.查找是否存在，-1：不存在
+     *      3.根据人员信息选择不同的类
+     *      4.添加对象
+     *      5.按照ID排序
+     * @param: [info]
+     * @return: 是否添加成功
+     */
     public boolean add(String info) {
         Empolyee e;
         String[] args = Split(info);
         if(find(Integer.parseInt(args[2])) != -1)
             return false;
+        size++;
         if(args[3].equals("开发")) {
             e = new Technician(info);
         } else if(args[3].equals("销售")) {
@@ -89,60 +104,56 @@ public class HR {
         emp.sort((o1, o2) -> (o1.getId() < o2.getId()) ? -1 : 1);
         return true;
     }
-    public boolean delete(int pos) {
-        if(pos == -1) {
-            return false;
-        }
+    public void delete(int pos) {
         emp.remove(pos);
         size--;
-        return true;
     }
     public int getSize() {
         return size;
     }
-
     public Empolyee get(int p) {
         return emp.get(p);
     }
 
-    public String[] openFile(String filePath) throws IOException {
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
-            String[] bufString = new String[1024];
-            String line;
-            size = 0;
-            root = Split(br.readLine());
-            while ((line = br.readLine()) != null) {
-                bufString[size++] = line;
-            }
-            br.close();
-            for (int i = 0; i < size; i++) {
-                add(bufString[i]);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            SysLog.log("data.txt File not found.");
+    /**
+     * @description:
+     * @param: [filePath]
+     * @return:
+     */
+    public String[] openFile(String filePath) throws IOException{
+        BufferedReader br = new BufferedReader(new FileReader(filePath));
+        String[] bufString = new String[1024];
+        String line;
+        int p = 0;
+        root = Split(br.readLine());
+        while ((line = br.readLine()) != null) {
+            bufString[p++] = line;
+        }
+        br.close();
+        for (int i = 0; i < p; i++) {
+            add(bufString[i]);
         }
         return root;
     }
-    public void saveFile(String fileName) {
-        try {
-            OutputStream os = new FileOutputStream(fileName);
-            PrintWriter pw = new PrintWriter(os);
-            pw.println(root[0] + " " + root[1]);
-            String[] buf = new String[1024];
-            int i = 0;
-            for(Empolyee e : emp) {
-                buf[i++] = e.toString();
-            }
-            for (i = 0; i < size; i++) {
-                pw.println(buf[i]);
-            }
-            pw.close();
-            os.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * @description:
+     * @param: [fileName]
+     * @return:
+     */
+    public void saveFile(String fileName) throws IOException {
+        OutputStream os = new FileOutputStream(fileName);
+        PrintWriter pw = new PrintWriter(os);
+        pw.println(root[0] + " " + root[1]);
+        String[] buf = new String[1024];
+        int i = 0;
+        for(Empolyee e : emp) {
+            buf[i++] = e.toString();
         }
+        for (i = 0; i < size; i++) {
+            pw.println(buf[i]);
+        }
+        pw.close();
+        os.close();
     }
     public static String getNum() {
         return String.format("共有: %d 人, %d 男, %d 女\n经理: %d 人, 销售经理: %d 人\n技术人员: %d 人, 销售人员: %d 人",
