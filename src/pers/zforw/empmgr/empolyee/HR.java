@@ -21,10 +21,13 @@ public class HR {
     private int size;
     static private String[] root;
     ArrayList<Empolyee> emp = new ArrayList<>();
+    /*
     public HR(ArrayList<Empolyee> e) {
         emp = e;
         size = e.size();
     }
+
+     */
     public HR() {
         size = 0;
     }

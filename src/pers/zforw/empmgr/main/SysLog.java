@@ -32,7 +32,7 @@ public class SysLog {
      * @return: void
      */
     public static void log(String content) {
-        File file = new File(Main.filePath + "/log.txt");
+        File file = new File(Main.filePath + "log.txt");
 
         FileOutputStream fos = null;
         OutputStreamWriter osw = null;

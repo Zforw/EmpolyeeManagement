@@ -33,12 +33,19 @@ public class Main {
     static Display display = new Display();
     static Shell logShell = new Shell(display);
     static Shell mainShell = new Shell(display);
-    protected final static String filePath = "/Users/zforw/IdeaProjects/Basic/src";
+    protected static String filePath = "/Users/zforw/IdeaProjects/Basic/src/";
+    protected static String OS;
 
     public static void main(String[] args) {
+        OS = System.getProperty("os.name").toLowerCase();
+        if(OS.indexOf("windows") > 0) {
+
+        } else {
+
+        }
         MessageBox msg = new MessageBox(logShell, SWT.ICON_WARNING | SWT.YES);
         try {
-            root = hr.openFile(filePath + "/data.txt");
+            root = hr.openFile(filePath + "data.txt");
         } catch (IOException e) {
             msg.setMessage(e.getMessage());
             msg.open();
@@ -59,7 +66,7 @@ public class Main {
         }
         if (isLogin) SysLog.log(root[0] + " logged out");
         try {
-            hr.saveFile(filePath + "/output.txt");
+            hr.saveFile(filePath + "output.txt");
         } catch (IOException e) {
             return;
         }
@@ -71,8 +78,7 @@ public class Main {
         mainShell.setBounds(570 - 75, 200 - 50, 600, 500);
         mainShell.setText("主界面");
 
-        /* ------------------登录界面代码------------------------ */
-        /* 创建触发按钮以及按钮的显示文字和大小位置 */
+        /* ---------------------登录界面代码------------------------ */
         Button okButton = new Button(logShell,SWT.NONE);
         Button exitButton = new Button(logShell, SWT.NONE);
 
@@ -185,13 +191,13 @@ public class Main {
         TabItem tabCount = new TabItem(folder, SWT.NONE);
         tabCount.setText("统计");
         Group group1 = new Group(folder, SWT.NONE);
-        Group group2 = new Group(folder, SWT.NONE);
+        //Group group2 = new Group(folder, SWT.NONE);
         Group group3 = new Group(folder, SWT.NONE);
         Label countLabel = new Label(group3, SWT.NONE);
         countLabel.setBounds(200, 100, 200, 80);
         countLabel.setText(HR.getNum());
 
-        /* ------------ group1 begin------------- */
+
         Button findButton = new Button(group1, SWT.NONE);
         Button saveButton = new Button(group1, SWT.NONE);
         Button deleteButton = new Button(group1, SWT.NONE);
@@ -202,17 +208,13 @@ public class Main {
         deleteButton.setText("删除");
         saveButton.setText("保存");
         findAllButton.setText("查找全部");
-        editButton.setText("编辑");
-        saveButton.setBounds(120, 345, 100, 25);
+        editButton.setText("修改");
+        saveButton.setBounds(120, 385, 94, 25);
         findButton.setBounds(40, 300, 70, 25);
         deleteButton.setBounds(40, 345, 70, 25);
-        findAllButton.setBounds(120, 300, 90, 25);
+        findAllButton.setBounds(120, 345, 94, 25);
         editButton.setBounds(40, 385,70,25);
-
-        //final Text nameText = new Text(group1, SWT.NONE);
-        //final Text idNumber = new Text(group1, SWT.NONE);
-
-
+        findAllButton.pack();
 
         /*
         Label nameLabel = new Label(group1, SWT.NONE);
@@ -250,11 +252,8 @@ public class Main {
 
         table.setHeaderVisible(true);
 
-        /* ---------group1 end---------- */
-
-        /* ------------ group2 begin------------- */
         Button addButton = new Button(group1, SWT.NONE);
-        addButton.setBounds(80, 290, 70, 20);
+        addButton.setBounds(120, 300, 94, 20);
         addButton.setText("添加");
         Label nLabel = new Label(group1, SWT.NONE);
         nLabel.setText("姓名:");
@@ -394,10 +393,12 @@ public class Main {
 
                 MessageBox msg = new MessageBox(mainShell, SWT.ICON_WARNING | SWT.NO | SWT.YES);
                 TableItem t = table.getItem(table.getSelectionIndex());
-                msg.setMessage("是否要编辑 " + t.getText());
+                msg.setMessage("是否要修改 " + t.getText());
                 SysLog.log("edit " + t.getText() + " " + t.getText(2));
-                hr.delete(hr.find(Integer.parseInt(t.getText(2))));
-                table.remove(table.getSelectionIndex());
+                Empolyee empolyee = hr.get(hr.find(Integer.parseInt(t.getText(2))));
+                empolyee.setBranch(branch.getText());
+                //empolyee.setRank();
+                //table.remove(table.getSelectionIndex());
             }
         });
 
@@ -436,7 +437,6 @@ public class Main {
                 }
             }
         });
-
         addButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -483,9 +483,7 @@ public class Main {
         });
          */
 
-        /* ----------------- group2 end------------------ */
         tabEdit.setControl(group1);
-        tabAdd.setControl(group2);
         tabCount.setControl(group3);
     }
 }
