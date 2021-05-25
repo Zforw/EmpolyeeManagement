@@ -130,9 +130,9 @@ public class HR {
     public String[] loadFile(String filePath) throws IOException{
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         String line;
-        root = Func.Split(br.readLine());
+        root = Func.Split(Func.decrypt(br.readLine()));
         while ((line = br.readLine()) != null) {
-            add(line);
+            add(Func.decrypt(line));
         }
         br.close();
         return root;
@@ -145,11 +145,11 @@ public class HR {
     public void saveFile(String fileName) throws IOException {
         OutputStream os = new FileOutputStream(fileName);
         PrintWriter pw = new PrintWriter(os);
-        pw.println(root[0] + " " + root[1]);
+        pw.println(Func.decrypt(root[0] + " " + root[1]));
         String[] buf = new String[size];
         int i = 0;
         for(Empolyee e : emp) {
-            buf[i++] = e.toString();
+            buf[i++] = Func.encrypt(e.toString());
         }
         for (i = 0; i < size; i++) {
             pw.println(buf[i]);

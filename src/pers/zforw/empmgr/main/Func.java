@@ -1,13 +1,36 @@
 package pers.zforw.empmgr.main;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.AlgorithmParameters;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPublicKey;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
-import java.security.*;
+import java.util.logging.Logger;
+
 
 /**
  * @version: 1.0
@@ -93,10 +116,8 @@ public class Func {
         }
         return result;
     }
-
-
     /*
-     * @description: 目录不存在则创建目录
+     * @description: 创建目录
      * @param: [fileDir]
      * @return:
      */
@@ -108,4 +129,27 @@ public class Func {
             file.mkdirs();
         }
     }
+
+
+    public static String encrypt(String msg) throws UnsupportedEncodingException {
+        msg = java.net.URLEncoder.encode(msg,"GBK");
+        byte[] text = msg.getBytes("GBK");//将字符串转换成byte类型数组，实质是各个字符的二进制形式
+        for (int i = 0;i < text.length;i++) {
+            text[i] += 23;
+        }
+        BigInteger m = new BigInteger(text);
+        return m.toString();
+    }
+
+    public static String decrypt(String encoded) throws UnsupportedEncodingException {
+        BigInteger m=new BigInteger(encoded);//二进制串转换为一个大整数
+        byte[] mt=m.toByteArray();//m为密文的BigInteger类型
+        for (int i = 0; i < mt.length;i++) {
+            mt[i] -= 23;
+        }
+        String str=(new String(mt,"GBK"));
+        str=java.net.URLDecoder.decode(str,"GBK");
+        return str;
+    }
+
 }

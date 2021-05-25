@@ -734,3 +734,14 @@
 [2021-05-25 08:56:03]store file output.txt
 [2021-05-25 09:37:36]load file data.txt
 [2021-05-25 09:37:38]store file output.txt
+[2021-05-25 09:40:20]load file data.txt
+[2021-05-25 09:40:23]su logged in
+[2021-05-25 09:41:53]su logged out
+[2021-05-25 09:41:53]store file output.txt
+[2021-05-25 17:46:33]load file data.txt
+[2021-05-25 17:47:23]load file data.txt
+[2021-05-25 17:47:26]su logged in
+[2021-05-25 17:47:52]add zforw 男 1234 管理 经理 1234 123
+[2021-05-25 17:51:26]load file data.txt
+[2021-05-25 17:51:29]su logged in
+[2021-05-25 17:51:48]su logged out

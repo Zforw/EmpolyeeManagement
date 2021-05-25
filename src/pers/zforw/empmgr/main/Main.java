@@ -5,6 +5,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -23,8 +24,11 @@ import org.eclipse.swt.widgets.Text;
 import pers.zforw.empmgr.empolyee.Empolyee;
 import pers.zforw.empmgr.empolyee.HR;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
 
 public class Main {
     static HR hr = new HR();
@@ -36,9 +40,10 @@ public class Main {
     protected static String filePath = "/Users/zforw/IdeaProjects/Basic/src/";
     protected static String OS;
 
-    public static void main(String[] args) {
-        OS = System.getProperty("os.name").toLowerCase();
+    public static void main(String[] args) throws IOException {
+
         /*
+        OS = System.getProperty("os.name").toLowerCase();
         if(OS.indexOf("windows") > 0) {
 
         } else {
@@ -46,9 +51,40 @@ public class Main {
         }
 
          */
+
+
+        /*
+        int size = 0;
+        BufferedReader br = new BufferedReader(new FileReader(filePath + "data.txt"));
+
+
+        String line;
+        String[] buf = new String[1024];
+        while ((line = br.readLine()) != null) {
+            buf[size++] = Func.encrypt(line);
+        }
+        br.close();
+        OutputStream os = new FileOutputStream(filePath + "encode.txt");
+        PrintWriter pw = new PrintWriter(os);
+
+        for (int i = 0; i < size; i++) {
+            pw.println(buf[i]);
+        }
+        pw.close();
+        os.close();
+
+        String l;
+        br = new BufferedReader(new FileReader(filePath + "encode.txt"));
+        while ((l = br.readLine()) != null) {
+            System.out.println(Func.decrypt(l));
+        }
+        br.close();
+
+         */
+
         MessageBox msg = new MessageBox(logShell, SWT.ICON_WARNING | SWT.YES);
         try {
-            root = hr.loadFile(filePath + "data.txt");
+            root = hr.loadFile(filePath + "encode.txt");
         } catch (IOException e) {
             msg.setMessage(e.getMessage());
             msg.open();
@@ -74,10 +110,11 @@ public class Main {
             return;
         }
         Func.log("store file output.txt");
+
     }
     private static void login() {
         logShell.setBounds(570, 200, 350, 300);
-        logShell.setText("登陆界面");
+        logShell.setText("登录界面");
         mainShell.setBounds(570 - 75, 200 - 50, 600, 500);
         mainShell.setText("主界面");
 
@@ -372,7 +409,11 @@ public class Main {
         });
         saveButton.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e){
-                display.close();
+                try {
+                    hr.saveFile(filePath + "output.txt");
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
 
@@ -412,8 +453,9 @@ public class Main {
                 eLabel.setText("密码不能为空");
             } else if(!password.getText().equals(nPassword.getText())) {
                 eLabel.setText("两次输入的密码不一致");
+                //eLabel.setForeground(new Color(255,0,0));
             } else {
-                eLabel.setText("✅");
+                eLabel.setText("密码相同");
             }
         });
 
