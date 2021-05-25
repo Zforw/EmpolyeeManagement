@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.security.*;
 
 /**
  * @version: 1.0
@@ -15,7 +16,7 @@ import java.util.Date;
  * @project: Basic
  * @description:
  */
-public class SysLog {
+public class Func {
     /***
      * @description: 定义时间格式
      * @param: []
@@ -71,6 +72,40 @@ public class SysLog {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * @description: 用空格将字符串分割
+     *      用于处理当两个子字符串之间多于一个空格的特殊情况
+     * @param: [str]
+     * @return:
+     */
+    public static String[] Split(String str) {
+        String[] result = str.split(" ");
+        for (int i = 0; i < result.length; i++) {
+            /*  */
+            if (result[i].length() == 0 && i < result.length - 1) {
+                String t = result[i];
+                result[i] = result[i + 1];
+                result[i + 1] = t;
+            }
+        }
+        return result;
+    }
+
+
+    /*
+     * @description: 目录不存在则创建目录
+     * @param: [fileDir]
+     * @return:
+     */
+    public static void createDir(String fileDir) {
+        File file = new File(fileDir);
+        //如果文件夹不存在则创建
+        if (!file.exists() && !file.isDirectory()) {
+            System.out.println("//不存在");
+            file.mkdirs();
         }
     }
 }

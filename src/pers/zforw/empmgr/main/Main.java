@@ -38,21 +38,24 @@ public class Main {
 
     public static void main(String[] args) {
         OS = System.getProperty("os.name").toLowerCase();
+        /*
         if(OS.indexOf("windows") > 0) {
 
         } else {
 
         }
+
+         */
         MessageBox msg = new MessageBox(logShell, SWT.ICON_WARNING | SWT.YES);
         try {
-            root = hr.openFile(filePath + "data.txt");
+            root = hr.loadFile(filePath + "data.txt");
         } catch (IOException e) {
             msg.setMessage(e.getMessage());
             msg.open();
-            SysLog.log(e.getMessage());
+            Func.log(e.getMessage());
             return;
         }
-        SysLog.log("load file data.txt");
+        Func.log("load file data.txt");
         login();
         logShell.open();
 
@@ -64,13 +67,13 @@ public class Main {
         if (!display.isDisposed()) {
             display.dispose();
         }
-        if (isLogin) SysLog.log(root[0] + " logged out");
+        if (isLogin) Func.log(root[0] + " logged out");
         try {
             hr.saveFile(filePath + "output.txt");
         } catch (IOException e) {
             return;
         }
-        SysLog.log("store file output.txt");
+        Func.log("store file output.txt");
     }
     private static void login() {
         logShell.setBounds(570, 200, 350, 300);
@@ -162,7 +165,7 @@ public class Main {
             msg.open();
 
             isLogin = true;
-            SysLog.log(name + " logged in");
+            Func.log(name + " logged in");
 
             mainShell.open();
             initMainShell();
@@ -311,13 +314,13 @@ public class Main {
                 ArrayList<Integer> findList = new ArrayList<>();
                 if(tName.length() != 0 && tId.length() != 0) {
                     findList = hr.find(tName, Integer.parseInt(tId));
-                    SysLog.log("find " + name + " " + tId);
+                    Func.log("find " + name + " " + tId);
                 } else if (tId.length() != 0){
                     findList.add(hr.find(Integer.parseInt(tId)));
-                    SysLog.log("find " + tId);
+                    Func.log("find " + tId);
                 } else {
                     findList = hr.find(tName);
-                    SysLog.log("find " + tName);
+                    Func.log("find " + tName);
                 }
                 if (findList == null || findList.get(0) == -1) {
                     MessageBox msg = new MessageBox(mainShell, SWT.ICON_WARNING | SWT.YES );
@@ -361,7 +364,7 @@ public class Main {
                 msg.setMessage("是否要删除 " + t.getText());
                 int rc = msg.open();
                 if (rc == SWT.YES) {
-                    SysLog.log("delete " + t.getText() + " " + t.getText(2));
+                    Func.log("delete " + t.getText() + " " + t.getText(2));
                     hr.delete(hr.find(Integer.parseInt(t.getText(2))));
                     table.remove(table.getSelectionIndex());
                 }
@@ -394,7 +397,7 @@ public class Main {
                 MessageBox msg = new MessageBox(mainShell, SWT.ICON_WARNING | SWT.NO | SWT.YES);
                 TableItem t = table.getItem(table.getSelectionIndex());
                 msg.setMessage("是否要修改 " + t.getText());
-                SysLog.log("edit " + t.getText() + " " + t.getText(2));
+                Func.log("edit " + t.getText() + " " + t.getText(2));
                 Empolyee empolyee = hr.get(hr.find(Integer.parseInt(t.getText(2))));
                 empolyee.setBranch(branch.getText());
                 //empolyee.setRank();
@@ -458,7 +461,7 @@ public class Main {
                     MessageBox msg = new MessageBox(mainShell, SWT.YES);
                     if (p) {
                         msg.setMessage("添加成功！");
-                        SysLog.log("add " + info);
+                        Func.log("add " + info);
                     } else {
                         msg.setMessage("工号重复！");
                     }

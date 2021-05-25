@@ -1,6 +1,7 @@
 package pers.zforw.empmgr.empolyee;
 
 import org.jetbrains.annotations.NotNull;
+import pers.zforw.empmgr.main.Func;
 
 /**
  * @version: 1.0
@@ -37,7 +38,7 @@ public class Empolyee {
         }
     }
     public Empolyee(String info) {
-        String[] array = HR.Split(info);
+        String[] array = Func.Split(info);
         this.name = array[0];
         this.gender = array[1];
         if (gender.equals("男")) {

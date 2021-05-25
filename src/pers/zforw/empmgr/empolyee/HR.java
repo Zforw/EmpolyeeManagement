@@ -1,6 +1,12 @@
 package pers.zforw.empmgr.empolyee;
 
+import pers.zforw.empmgr.main.Func;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -86,7 +92,7 @@ public class HR {
      */
     public boolean add(String info) {
         Empolyee e;
-        String[] args = Split(info);
+        String[] args = Func.Split(info);
         if(find(Integer.parseInt(args[2])) != -1)
             return false;
         size++;
@@ -121,10 +127,10 @@ public class HR {
      * @param: [filePath]
      * @return:
      */
-    public String[] openFile(String filePath) throws IOException{
+    public String[] loadFile(String filePath) throws IOException{
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         String line;
-        root = Split(br.readLine());
+        root = Func.Split(br.readLine());
         while ((line = br.readLine()) != null) {
             add(line);
         }
@@ -151,27 +157,11 @@ public class HR {
         pw.close();
         os.close();
     }
+
     public static String getNum() {
         return String.format("共有: %d 人, %d 男, %d 女\n经理: %d 人, 销售经理: %d 人\n技术人员: %d 人, 销售人员: %d 人",
                 Empolyee.getTot(), Empolyee.getMale(), Empolyee.getFemale(),
                 Manager.getTotal(), SalesManager.getTotal(), Technician.getTotal(), SalesClerk.getTotal());
     }
-    /**
-     * @description: 用空格将字符串分割
-     *      用于处理当两个子字符串之间多于一个空格的特殊情况
-     * @param: [str]
-     * @return:
-     */
-    public static String[] Split(String str) {
-        String[] result = str.split(" ");
-        for (int i = 0; i < result.length; i++) {
-            /*  */
-            if (result[i].length() == 0 && i < result.length - 1) {
-                String t = result[i];
-                result[i] = result[i + 1];
-                result[i + 1] = t;
-            }
-        }
-        return result;
-    }
+
 }
