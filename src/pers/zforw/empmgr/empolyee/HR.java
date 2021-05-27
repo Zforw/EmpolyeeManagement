@@ -13,7 +13,14 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @version: 1.0
@@ -26,32 +33,9 @@ public class HR {
 
     private int size;
     static private String[] root;
-    ArrayList<Empolyee> emp = new ArrayList<>();
-    /*
-    public HR(ArrayList<Empolyee> e) {
-        emp = e;
-        size = e.size();
-    }
-
-     */
+    TreeMap<Integer, Empolyee> emp = new TreeMap<>();
     public HR() {
         size = 0;
-    }
-    /**
-     * @description: 通过姓名查找
-     * @param: [name]
-     * @return:
-     */
-    public ArrayList<Integer> find(String name) {
-        int i = 0;
-        ArrayList<Integer> list = new ArrayList<>();
-        for(Empolyee e : emp) {
-            if(e.getName().equals(name)) {
-                list.add(i);
-            }
-            i++;
-        }
-        return list.size() > 0?list:null;
     }
     /**
      * @description:
@@ -59,26 +43,25 @@ public class HR {
      * @param: [id]
      * @return:
      */
-    public int find(int id) {
-        int i = 0;
-        for(Empolyee e : emp) {
-            if (e.getId() == id) {
-                return i;
-            }
-            i++;
-        }
-        return -1;
+    public Empolyee find(int id) {
+        if (!emp.containsKey(id)) return null;
+        return emp.get(id);
     }
-    public ArrayList<Integer> find(String name, int id) {
-        int i = 0;
-        ArrayList<Integer> list = new ArrayList<>();
-        for(Empolyee e : emp) {
-            if((e.getId() == id || e.getName().equals(name))) {
-                list.add(i);
+    public ArrayList<Empolyee> find(String name) {
+        Map<Float, Empolyee> map = new HashMap<>();
+        for (Integer id : emp.keySet()) {
+            float similarity = Func.levenshtein(emp.get(id).getName(), name);
+            if ((similarity > 0.15)) {
+                map.put(similarity, emp.get(id));
             }
-            i++;
         }
-        return list.size() > 0?list:null;
+        List<Map.Entry<Float, Empolyee>> list = new ArrayList<>(map.entrySet());
+        ArrayList<Empolyee> res = new ArrayList<>();
+        if (list.size() == 0) return null;
+        for (Map.Entry<Float, Empolyee> e : list) {
+            res.add(e.getValue());
+        }
+        return res;
     }
     /**
      * @description: 添加人员
@@ -93,7 +76,7 @@ public class HR {
     public boolean add(String info) {
         Empolyee e;
         String[] args = Func.Split(info);
-        if(find(Integer.parseInt(args[2])) != -1)
+        if(find(Integer.parseInt(args[2])) != null)
             return false;
         size++;
         if(args[3].equals("开发")) {
@@ -107,20 +90,34 @@ public class HR {
         } else {
             e = new Manager(info);
         }
-        emp.add(e);
-        emp.sort(Comparator.comparingInt(Empolyee::getId));
+        emp.put(Integer.parseInt(args[2]), e);
+        //emp.sort(Comparator.comparingInt(Empolyee::getId));
         return true;
     }
-    public void delete(int pos) {
-        emp.remove(pos);
+    public void delete(int id) {
+        emp.remove(id);
         size--;
     }
     public int getSize() {
         return size;
     }
-    public Empolyee get(int p) {
-        return emp.get(p);
+    public void modifyRank(int id, String rank) {
+        emp.get(id).setRank(rank);
     }
+    public void modifyBranch(int id, String branch) {
+        emp.get(id).setBranch(branch);
+    }
+    public void modifySalary(int id, int salary) {
+        emp.get(id).setSalary(salary);
+    }
+    public void modifyPass(int id, String pass) {
+        emp.get(id).setPassword(pass);
+    }
+
+    public Collection getIter() {
+        return emp.values();
+    }
+
 
     /**
      * @description:
@@ -145,11 +142,11 @@ public class HR {
     public void saveFile(String fileName) throws IOException {
         OutputStream os = new FileOutputStream(fileName);
         PrintWriter pw = new PrintWriter(os);
-        pw.println(Func.decrypt(root[0] + " " + root[1]));
+        pw.println(Func.encrypt(root[0] + " " + root[1]));
         String[] buf = new String[size];
         int i = 0;
-        for(Empolyee e : emp) {
-            buf[i++] = Func.encrypt(e.toString());
+        for(Integer id : emp.keySet()) {
+            buf[i++] = Func.encrypt(emp.get(id).toString());
         }
         for (i = 0; i < size; i++) {
             pw.println(buf[i]);

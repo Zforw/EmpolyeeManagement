@@ -28,6 +28,7 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -142,14 +143,45 @@ public class Func {
     }
 
     public static String decrypt(String encoded) throws UnsupportedEncodingException {
-        BigInteger m=new BigInteger(encoded);//二进制串转换为一个大整数
-        byte[] mt=m.toByteArray();//m为密文的BigInteger类型
+        BigInteger m = new BigInteger(encoded);//二进制串转换为一个大整数
+        byte[] mt = m.toByteArray();//m为密文的BigInteger类型
         for (int i = 0; i < mt.length;i++) {
             mt[i] -= 23;
         }
-        String str=(new String(mt,"GBK"));
+        String str = new String(mt,"GBK");
         str=java.net.URLDecoder.decode(str,"GBK");
         return str;
+    }
+
+    public static float levenshtein(String str1, String str2) {
+        int len1 = str1.length();
+        int len2 = str2.length();
+        //建立上面说的数组，比字符长度大一个空间
+        int[][] dif = new int[len1 + 1][len2 + 1];
+        //赋初值，步骤B。
+        for (int a = 0; a <= len1; a++) {
+            dif[a][0] = a;
+        }
+        for (int a = 0; a <= len2; a++) {
+            dif[0][a] = a;
+        }
+        //计算两个字符是否一样，计算左上的值
+        int temp;
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    temp = 0;
+                } else {
+                    temp = 1;
+                }
+                //取三个值中最小的
+                dif[i][j] = Math.min(Math.min(dif[i - 1][j - 1] + temp, dif[i][j - 1] + 1),
+                        dif[i - 1][j] + 1);
+            }
+        }
+        //取数组右下角的值，同样不同位置代表不同字符串的比较，差异步骤：dif[len1][len2]);
+        //计算相似度
+        return 1 - (float) dif[len1][len2] / Math.max(str1.length(), str2.length());
     }
 
 }

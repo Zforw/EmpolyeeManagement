@@ -3,6 +3,8 @@ package pers.zforw.empmgr.main;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -28,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class Main {
@@ -52,40 +55,10 @@ public class Main {
 
          */
 
-
-        /*
-        int size = 0;
-        BufferedReader br = new BufferedReader(new FileReader(filePath + "data.txt"));
-
-
-        String line;
-        String[] buf = new String[1024];
-        while ((line = br.readLine()) != null) {
-            buf[size++] = Func.encrypt(line);
-        }
-        br.close();
-        OutputStream os = new FileOutputStream(filePath + "encode.txt");
-        PrintWriter pw = new PrintWriter(os);
-
-        for (int i = 0; i < size; i++) {
-            pw.println(buf[i]);
-        }
-        pw.close();
-        os.close();
-
-        String l;
-        br = new BufferedReader(new FileReader(filePath + "encode.txt"));
-        while ((l = br.readLine()) != null) {
-            System.out.println(Func.decrypt(l));
-        }
-        br.close();
-
-         */
-
-        MessageBox msg = new MessageBox(logShell, SWT.ICON_WARNING | SWT.YES);
         try {
-            root = hr.loadFile(filePath + "encode.txt");
+            root = hr.loadFile(filePath + "output.txt");
         } catch (IOException e) {
+            MessageBox msg = new MessageBox(logShell, SWT.ICON_WARNING | SWT.YES);
             msg.setMessage(e.getMessage());
             msg.open();
             Func.log(e.getMessage());
@@ -127,18 +100,18 @@ public class Main {
         exitButton.setBounds(180, 235, 70, 25);
         okButton.setBounds(80, 235, 70, 25);
 
-        final Text nameText = new Text(logShell,SWT.NONE);
-        final Text passNumber = new Text(logShell,SWT.PASSWORD);
+        final Text nameText = new Text(logShell, SWT.NONE);
+        final Text passNumber = new Text(logShell, SWT.PASSWORD);
         nameText.setFocus();
 
         nameText.setBounds(120, 100, 110, 20);
         passNumber.setBounds(120, 160, 110, 20);
 
-        Label nameLabel = new Label(logShell,SWT.NONE);
+        Label nameLabel = new Label(logShell, SWT.NONE);
         nameLabel.setText("用户名：");
         nameLabel.setBounds(65, 100, 40,20);
 
-        Label passLabel = new Label(logShell,SWT.NONE);
+        Label passLabel = new Label(logShell, SWT.NONE);
         passLabel.setText("密   码：");
         passLabel.setBounds(65, 165, 40, 20);
 
@@ -256,18 +229,6 @@ public class Main {
         editButton.setBounds(40, 385,70,25);
         findAllButton.pack();
 
-        /*
-        Label nameLabel = new Label(group1, SWT.NONE);
-        nameLabel.setText("姓名：");
-        nameLabel.setBounds(35, 100, 40,20);
-
-        Label idLabel = new Label(group1, SWT.NONE);
-        idLabel.setText("工号：");
-        idLabel.setBounds(35, 160, 40,20);
-        idLabel.pack();
-
-         */
-
         Table table = new Table(group1, SWT.BORDER);
         table.setBounds(230, 20, 300, 350);
         TableColumn tc1 = new TableColumn(table, SWT.CENTER);
@@ -324,7 +285,7 @@ public class Main {
         Label sLabel = new Label(group1, SWT.NONE);
         sLabel.setText("工资:");
         sLabel.setBounds(20, 170, 90, 20);
-        Text salary = new Text(group1, SWT.NONE);
+        final Text salary = new Text(group1, SWT.NONE);
         salary.setBounds(120, 170, 90, 20);
         Label pLabel = new Label(group1, SWT.NONE);
         pLabel.setText("密码:");
@@ -342,38 +303,35 @@ public class Main {
 
         /* 只能输入整数 */
         id.addVerifyListener(e -> e.doit = "0123456789".contains(e.text));
+        //salary.addVerifyListener(ee -> ee.doit = "0123456789".contains(ee.text));
+        System.err.println("Main.java.304");
 
         findButton.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
                 String tName = name.getText();
                 String tId = id.getText();
-                ArrayList<Integer> findList = new ArrayList<>();
-                if(tName.length() != 0 && tId.length() != 0) {
-                    findList = hr.find(tName, Integer.parseInt(tId));
-                    Func.log("find " + name + " " + tId);
-                } else if (tId.length() != 0){
+                ArrayList<Empolyee> findList = new ArrayList<>();
+                if (tId.length() != 0) {
                     findList.add(hr.find(Integer.parseInt(tId)));
                     Func.log("find " + tId);
-                } else {
+                } else if(tName.length() != 0){
                     findList = hr.find(tName);
                     Func.log("find " + tName);
                 }
-                if (findList == null || findList.get(0) == -1) {
+                if (findList.size() == 0) {
                     MessageBox msg = new MessageBox(mainShell, SWT.ICON_WARNING | SWT.YES );
                     msg.setMessage("查无此人！\n" + ((tName.length() == 0)?(" "):("姓名:" + tName)) +
                             ((tId.length() == 0)?(" "):(" 工号:" + tId)));
                     msg.open();
                 } else {
                     table.removeAll();
-                    for(Integer i : findList) {
-                        Empolyee empolyee = hr.get(i);
+                    for(Empolyee empolyee : findList) {
                         TableItem item = new TableItem(table, SWT.NONE);
                         item.setText(new String[]{empolyee.getName(), empolyee.getGender(),String.valueOf(empolyee.getId()),
                                                 empolyee.getBranch(), empolyee.getRank(), String.valueOf(empolyee.getSalary())});
                     }
                 }
-
             }
         }
         );
@@ -382,16 +340,15 @@ public class Main {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 table.removeAll();
-                for (int i = 0;i < hr.getSize();i++) {
-                    Empolyee empolyee = hr.get(i);
+                Iterator iterator = hr.getIter().iterator();
+                while (iterator.hasNext()) {
+                    Empolyee empolyee = (Empolyee) iterator.next();
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[]{empolyee.getName(), empolyee.getGender(),String.valueOf(empolyee.getId()),
                             empolyee.getBranch(), empolyee.getRank(), String.valueOf(empolyee.getSalary())});
                 }
-
             }
         });
-
         deleteButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -402,7 +359,7 @@ public class Main {
                 int rc = msg.open();
                 if (rc == SWT.YES) {
                     Func.log("delete " + t.getText() + " " + t.getText(2));
-                    hr.delete(hr.find(Integer.parseInt(t.getText(2))));
+                    hr.delete(Integer.parseInt(t.getText(2)));
                     table.remove(table.getSelectionIndex());
                 }
             }
@@ -416,7 +373,6 @@ public class Main {
                 }
             }
         });
-
         table.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -430,6 +386,16 @@ public class Main {
                 salary.setText(t.getText(5));
             }
         });
+        final boolean[] modifiedBranch = {false};
+        final boolean[] modifiedRank = {false};
+        final boolean[] modifiedSalary = {false};
+        final boolean[] modifiedPassword = {false};
+
+        branch.addModifyListener(modifyEvent -> modifiedBranch[0] = true);
+        rank.addModifyListener(modifyEvent -> modifiedRank[0] = true);
+        salary.addModifyListener(modifyEvent -> modifiedSalary[0] = true);
+        password.addModifyListener(modifyEvent -> modifiedPassword[0] = true);
+
         editButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -439,9 +405,12 @@ public class Main {
                 TableItem t = table.getItem(table.getSelectionIndex());
                 msg.setMessage("是否要修改 " + t.getText());
                 Func.log("edit " + t.getText() + " " + t.getText(2));
-                Empolyee empolyee = hr.get(hr.find(Integer.parseInt(t.getText(2))));
-                empolyee.setBranch(branch.getText());
-                //empolyee.setRank();
+                int id = Integer.parseInt(t.getText(2));
+                if (modifiedBranch[0])  hr.modifyBranch(id, branch.getText());
+                if (modifiedRank[0])    hr.modifyRank(id, rank.getText());
+                if (modifiedSalary[0])  hr.modifySalary(id, Integer.parseInt(salary.getText()));
+                if (modifiedPassword[0])hr.modifyPass(id, password.getText());
+
                 //table.remove(table.getSelectionIndex());
             }
         });
@@ -511,22 +480,6 @@ public class Main {
                 }
             }
         });
-
-        /*
-         * @description: TO-DO make all group2 in mainShell
-         * @param: []
-         * @return:
-         */
-        /*
-        folder.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                if (folder.getSelectionIndex() == 2) {
-                    countLabel.setText(HR.getNum());
-                }
-            }
-        });
-         */
 
         tabEdit.setControl(group1);
         tabCount.setControl(group3);
