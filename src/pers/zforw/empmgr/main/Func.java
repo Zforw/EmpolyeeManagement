@@ -1,37 +1,14 @@
 package pers.zforw.empmgr.main;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.AlgorithmParameters;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.Security;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPublicKey;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.logging.Logger;
-
 
 /**
  * @version: 1.0
@@ -117,6 +94,7 @@ public class Func {
         }
         return result;
     }
+
     /*
      * @description: 创建目录
      * @param: [fileDir]
@@ -132,6 +110,11 @@ public class Func {
     }
 
 
+    /*
+     * @description:
+     * @param: [msg]
+     * @return:
+     */
     public static String encrypt(String msg) throws UnsupportedEncodingException {
         msg = java.net.URLEncoder.encode(msg,"GBK");
         byte[] text = msg.getBytes("GBK");//将字符串转换成byte类型数组，实质是各个字符的二进制形式
@@ -142,6 +125,11 @@ public class Func {
         return m.toString();
     }
 
+    /*
+     * @description:
+     * @param: [encoded]
+     * @return:
+     */
     public static String decrypt(String encoded) throws UnsupportedEncodingException {
         BigInteger m = new BigInteger(encoded);//二进制串转换为一个大整数
         byte[] mt = m.toByteArray();//m为密文的BigInteger类型
@@ -153,6 +141,11 @@ public class Func {
         return str;
     }
 
+    /*
+     * @description:
+     * @param: [str1, str2]
+     * @return:
+     */
     public static float levenshtein(String str1, String str2) {
         int len1 = str1.length();
         int len2 = str2.length();

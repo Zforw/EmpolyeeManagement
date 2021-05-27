@@ -1,25 +1,26 @@
-package pers.zforw.empmgr.empolyee;
+package pers.zforw.empmgr.employee;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @version: 1.0
  * @author: zforw
- * @date: 2021/05/21 7:44 下午
+ * @date: 2021/05/21 7:48 下午
  * @project: Basic
  * @description:
  */
-public class Manager extends Empolyee{
+public class Technician extends Employee {
     private static int total = 0;
-    public Manager(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
+    public Technician(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
         super(name, gender, id, branch, rank, salary, password);
         total++;
     }
 
-    public Manager(String info) {
+    public Technician(String info) {
         super(info);
         total++;
     }
+
     public static int getTotal() {
         return total;
     }

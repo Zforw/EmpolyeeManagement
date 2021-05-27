@@ -1,4 +1,4 @@
-package pers.zforw.empmgr.empolyee;
+package pers.zforw.empmgr.employee;
 
 import org.jetbrains.annotations.NotNull;
 import pers.zforw.empmgr.main.Func;
@@ -10,7 +10,7 @@ import pers.zforw.empmgr.main.Func;
  * @project: Basic
  * @description:
  */
-public class Empolyee {
+public class Employee {
     private static int tot = 0;
     static protected int male = 0;
     static protected int female = 0;
@@ -22,7 +22,7 @@ public class Empolyee {
     protected String branch;
     protected String rank;
 
-    public Empolyee(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
+    public Employee(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
         this.name = name;
         this.gender = gender;
         this.id = id;
@@ -37,7 +37,7 @@ public class Empolyee {
             female++;
         }
     }
-    public Empolyee(String info) {
+    public Employee(String info) {
         String[] array = Func.Split(info);
         this.name = array[0];
         this.gender = array[1];
@@ -58,26 +58,20 @@ public class Empolyee {
     public String toString() {
         return String.format("%s %s %s %s %s %s %s", name, gender, id, branch, rank, salary, password);
     }
-    /**
-     * @description: 
-     * @param: [info]
-     * @return: 
-     */
 
-
-    public void setSalary(int salary) {
+    protected void setSalary(int salary) {
         this.salary = salary;
     }
 
-    public void setPassword(String password) {
+    protected void setPassword(String password) {
         this.password = password;
     }
 
-    public void setBranch(String branch) {
+    protected void setBranch(String branch) {
         this.branch = branch;
     }
 
-    public void setRank(String rank) {
+    protected void setRank(String rank) {
         this.rank = rank;
     }
 

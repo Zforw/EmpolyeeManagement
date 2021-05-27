@@ -1,4 +1,4 @@
-package pers.zforw.empmgr.empolyee;
+package pers.zforw.empmgr.employee;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * @project: Basic
  * @description:
  */
-public class SalesClerk extends Empolyee{
+public class SalesClerk extends Employee {
     private static int total = 0;
     public SalesClerk(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
         super(name, gender, id, branch, rank, salary, password);

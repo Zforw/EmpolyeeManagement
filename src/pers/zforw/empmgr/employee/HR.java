@@ -1,12 +1,8 @@
-package pers.zforw.empmgr.empolyee;
+package pers.zforw.empmgr.employee;
 
 import pers.zforw.empmgr.main.Func;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,10 +10,7 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,32 +26,36 @@ public class HR {
 
     private int size;
     static private String[] root;
-    TreeMap<Integer, Empolyee> emp = new TreeMap<>();
+    TreeMap<Integer, Employee> emp = new TreeMap<>();
     public HR() {
         size = 0;
     }
     /**
      * @description:
-     *      返回id所在emp内的位置，-1为不存在
+     *      返回id对应的员工对象
      * @param: [id]
      * @return:
      */
-    public Empolyee find(int id) {
+    public Employee find(int id) {
         if (!emp.containsKey(id)) return null;
         return emp.get(id);
     }
-    public ArrayList<Empolyee> find(String name) {
-        Map<Float, Empolyee> map = new HashMap<>();
+    /*
+     * @description: 返回和name相似度大于0.15的
+     * @param: [name]
+     * @return:
+     */
+    public ArrayList<Employee> find(String name) {
+        Map<Float, Employee> map = new HashMap<>();
         for (Integer id : emp.keySet()) {
             float similarity = Func.levenshtein(emp.get(id).getName(), name);
             if ((similarity > 0.15)) {
                 map.put(similarity, emp.get(id));
             }
         }
-        List<Map.Entry<Float, Empolyee>> list = new ArrayList<>(map.entrySet());
-        ArrayList<Empolyee> res = new ArrayList<>();
-        if (list.size() == 0) return null;
-        for (Map.Entry<Float, Empolyee> e : list) {
+        List<Map.Entry<Float, Employee>> list = new ArrayList<>(map.entrySet());
+        ArrayList<Employee> res = new ArrayList<>();
+        for (Map.Entry<Float, Employee> e : list) {
             res.add(e.getValue());
         }
         return res;
@@ -66,15 +63,14 @@ public class HR {
     /**
      * @description: 添加人员
      *      1.将信息进行分割
-     *      2.查找是否存在，-1：不存在
+     *      2.查找是否存在
      *      3.根据人员信息选择不同的类
      *      4.添加对象
-     *      5.按照ID排序
      * @param: [info]
      * @return: 是否添加成功
      */
     public boolean add(String info) {
-        Empolyee e;
+        Employee e;
         String[] args = Func.Split(info);
         if(find(Integer.parseInt(args[2])) != null)
             return false;
@@ -91,7 +87,7 @@ public class HR {
             e = new Manager(info);
         }
         emp.put(Integer.parseInt(args[2]), e);
-        //emp.sort(Comparator.comparingInt(Empolyee::getId));
+        //emp.sort(Comparator.comparingInt(Employee::getId));
         return true;
     }
     public void delete(int id) {
@@ -157,7 +153,7 @@ public class HR {
 
     public static String getNum() {
         return String.format("共有: %d 人, %d 男, %d 女\n经理: %d 人, 销售经理: %d 人\n技术人员: %d 人, 销售人员: %d 人",
-                Empolyee.getTot(), Empolyee.getMale(), Empolyee.getFemale(),
+                Employee.getTot(), Employee.getMale(), Employee.getFemale(),
                 Manager.getTotal(), SalesManager.getTotal(), Technician.getTotal(), SalesClerk.getTotal());
     }
 
