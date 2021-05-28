@@ -41,7 +41,7 @@ public class HR {
         return emp.get(id);
     }
     /*
-     * @description: 返回和name相似度大于0.15的
+     * @description: 返回和name相似度大于0.15的名字
      * @param: [name]
      * @return:
      */
@@ -69,6 +69,30 @@ public class HR {
      * @param: [info]
      * @return: 是否添加成功
      */
+    public boolean add(Employee employee) {
+        System.out.println("given " + employee.getClass().getName());
+        Employee e;
+        if(find(employee.getId()) != null)
+            return false;
+        size++;
+        String info = employee.getInfo();
+        String branch = employee.getBranch();
+        if(branch.equals("开发")) {
+            e = new Technician(info);
+        } else if(branch.equals("销售")) {
+            if (employee.getRank().equals("经理")) {
+                e = new SalesManager(info);
+            } else {
+                e = new SalesClerk(info);
+            }
+        } else {
+            e = new Manager(info);
+        }
+        emp.put(employee.getId(), e);
+        System.out.println("add " + e.getClass().getName());
+        //emp.sort(Comparator.comparingInt(Employee::getId));
+        return true;
+    }
     public boolean add(String info) {
         Employee e;
         String[] args = Func.Split(info);
@@ -79,9 +103,9 @@ public class HR {
             e = new Technician(info);
         } else if(args[3].equals("销售")) {
             if (args[4].equals("经理")) {
-                e = new SalesClerk(info);
-            } else {
                 e = new SalesManager(info);
+            } else {
+                e = new SalesClerk(info);
             }
         } else {
             e = new Manager(info);
@@ -90,19 +114,15 @@ public class HR {
         //emp.sort(Comparator.comparingInt(Employee::getId));
         return true;
     }
-    public void delete(int id) {
-        emp.remove(id);
+    public Employee delete(int id) {
         size--;
+        return emp.remove(id);
     }
-    public int getSize() {
-        return size;
-    }
+    //public int getSize() { return size; }
     public void modifyRank(int id, String rank) {
         emp.get(id).setRank(rank);
     }
-    public void modifyBranch(int id, String branch) {
-        emp.get(id).setBranch(branch);
-    }
+    //public void modifyBranch(int id, String branch) { emp.get(id).setBranch(branch); }
     public void modifySalary(int id, int salary) {
         emp.get(id).setSalary(salary);
     }
@@ -142,7 +162,7 @@ public class HR {
         String[] buf = new String[size];
         int i = 0;
         for(Integer id : emp.keySet()) {
-            buf[i++] = Func.encrypt(emp.get(id).toString());
+            buf[i++] = Func.encrypt(emp.get(id).getInfo());
         }
         for (i = 0; i < size; i++) {
             pw.println(buf[i]);

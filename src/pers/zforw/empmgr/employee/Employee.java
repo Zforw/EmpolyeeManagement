@@ -14,14 +14,23 @@ public class Employee {
     private static int tot = 0;
     static protected int male = 0;
     static protected int female = 0;
-    protected int id;
-    protected int salary;
-    protected String password;
-    protected String name;
-    protected String gender;
-    protected String branch;
-    protected String rank;
+    private final int id;
+    private int salary;
+    private String password;
+    private final String name;
+    private final String gender;
+    private String branch;
+    private String rank;
 
+    public Employee(Employee employee) {
+        id = employee.id;
+        name = employee.name;
+        gender = employee.gender;
+        branch = employee.branch;
+        rank = employee.rank;
+        salary = employee.salary;
+        password = employee.password;
+    }
     public Employee(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
         this.name = name;
         this.gender = gender;
@@ -54,8 +63,8 @@ public class Employee {
         this.password = array[6];
     }
 
-    @Override
-    public String toString() {
+
+    protected String getInfo() {
         return String.format("%s %s %s %s %s %s %s", name, gender, id, branch, rank, salary, password);
     }
 

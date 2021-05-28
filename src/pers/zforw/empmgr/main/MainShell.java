@@ -1,6 +1,8 @@
 package pers.zforw.empmgr.main;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -17,17 +19,14 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import pers.zforw.empmgr.employee.Employee;
 import pers.zforw.empmgr.employee.HR;
+import pers.zforw.empmgr.employee.Manager;
+import pers.zforw.empmgr.employee.SalesClerk;
+import pers.zforw.empmgr.employee.SalesManager;
+import pers.zforw.empmgr.employee.Technician;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * @version: 1.0
- * @author: zforw
- * @date: 2021/05/27 7:07 下午
- * @project: Basic
- * @description:
- */
 public class MainShell {
     protected static void initMainShell() {
         TabFolder folder = new TabFolder(Main.mainShell, SWT.TOP);
@@ -64,9 +63,9 @@ public class MainShell {
         saveButton.setBounds(120, 390, 94, 25);
         findButton.setBounds(20, 300, 70, 25);
         deleteButton.setBounds(20, 345, 70, 25);
-        findAllButton.setBounds(120, 345, 94, 25);
+        findAllButton.setBounds(120, 300, 94, 25);
         editButton.setBounds(20, 390,70,25);
-        addButton.setBounds(120, 300, 94, 25);
+        addButton.setBounds(120, 345, 94, 25);
 
 
         Table table = new Table(group1, SWT.BORDER);
@@ -137,8 +136,11 @@ public class MainShell {
         Label eLabel = new Label(group1, SWT.NONE);
         eLabel.setBounds(10, 270, 120, 20);
 
-        /* 只能输入整数 */
-        /*
+        Combo position = new Combo(group1, SWT.DROP_DOWN | SWT.READ_ONLY);
+        position.setItems("经理", "销售经理", "销售人员", "技术人员");
+        position.setBounds(124, 270, 90, 30);
+        position.select(0);
+        /* 只能输入整数
             id.addVerifyListener(e -> e.do it = "0123456789".contains(e.text));
             salary.addVerifyListener(e -> e.do it = "0123456789".contains(ee.text));
         */
@@ -224,21 +226,42 @@ public class MainShell {
                 gender.setText(t.getText(1));
                 id.setText(t.getText(2));
                 branch.setText(t.getText(3));
-                rank.setText(t.getText(4));
                 salary.setText(t.getText(5));
+                if(branch.getText().equals("开发")) {
+                    rank.setItems("P4", "P5", "P6", "P7");
+                } else if(branch.getText().equals("销售")) {
+                    rank.setItems("经理", "职员");
+                    /*
+                    if (rank.getText().equals("经理")) {
+                        rank.setItems("经理");
+                    } else {
+                        rank.setItems("职员");
+                    }
+
+                     */
+                } else {
+                    rank.setItems("经理");
+                }
+                rank.setText(t.getText(4));
             }
         });
 
-        final boolean[] modifiedBranch   = {false};
-        final boolean[] modifiedRank     = {false};
-        final boolean[] modifiedSalary   = {false};
         final boolean[] modifiedPassword = {false};
 
-        branch.addModifyListener(modifyEvent -> modifiedBranch[0] = true);
-        rank.addModifyListener(modifyEvent -> modifiedRank[0] = true);
-        salary.addModifyListener(modifyEvent -> modifiedSalary[0] = true);
         password.addModifyListener(modifyEvent -> modifiedPassword[0] = true);
 
+        rank.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent modifyEvent) {
+                if (!branch.getText().equals("销售"))
+                    return;
+                if (rank.getText().equals("职员")) {
+                    position.setText("销售人员");
+                } else {
+                    position.setText("销售经理");
+                }
+            }
+        });
         /*
          * @description: 
          * @param: []
@@ -250,14 +273,30 @@ public class MainShell {
                 if (table.getSelectionCount() == 0) return;
                 MessageBox msg = new MessageBox(Main.mainShell, SWT.ICON_WARNING | SWT.NO | SWT.YES);
                 TableItem t = table.getItem(table.getSelectionIndex());
+                String[] initInfo = {t.getText(0), t.getText(1), t.getText(2), t.getText(3),
+                                    t.getText(4), t.getText(5)};
                 msg.setMessage("是否要修改 " + t.getText());
                 Func.log("edit " + t.getText() + " " + t.getText(2));
                 int id = Integer.parseInt(t.getText(2));
-                if (modifiedBranch[0])   Main.hr.modifyBranch(id, branch.getText());
-                if (modifiedRank[0])     Main.hr.modifyRank(id, rank.getText());
-                if (modifiedSalary[0])   Main.hr.modifySalary(id, Integer.parseInt(salary.getText()));
-                if (modifiedPassword[0]) Main.hr.modifyPass(id, password.getText());
-                //table.remove(table.getSelectionIndex());
+                if (!position.getText().equals(initInfo[3])) {
+                    Employee employee = new Employee(Main.hr.delete(Integer.parseInt(initInfo[2])));
+                    Main.hr.add(employee);
+                    //Main.hr.add(initInfo[0] + " " + initInfo[1] + " " + initInfo[2] + " " + position.getText() + " " +
+                      //      branch.getText() + " " + salary.getText() + " " + Main.hr.find(Integer.parseInt(initInfo[2])).get);
+                }else {
+                    if (!rank.getText().equals(initInfo[4])) {
+                        initInfo[4] = rank.getText();
+                        Main.hr.modifyRank(id, rank.getText());
+                    }
+                    if (!salary.getText().equals(initInfo[5])) {
+                        initInfo[5] = salary.getText();
+                        Main.hr.modifySalary(id, Integer.parseInt(salary.getText()));
+                    }
+                    if (modifiedPassword[0]) {
+                        Main.hr.modifyPass(id, password.getText());
+                    }
+                }
+                t.setText(initInfo);
             }
         });
 
@@ -272,10 +311,7 @@ public class MainShell {
             }
         });
 
-        Combo position = new Combo(group1, SWT.DROP_DOWN | SWT.READ_ONLY);
-        position.setItems("经理", "销售经理", "销售人员", "技术人员");
-        position.setBounds(124, 270, 90, 30);
-        position.select(0);
+
         position.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -312,7 +348,7 @@ public class MainShell {
                             + " " + branch.getText() + " " +
                             rank.getText() + " " + salary.getText() + " " + password.getText();
                     boolean p = Main.hr.add(info);
-                    MessageBox msg = new MessageBox(Main.mainShell, SWT.YES);
+                    MessageBox msg = new MessageBox(Main.mainShell, SWT.YES | SWT.ICON_INFORMATION);
                     if (p) {
                         msg.setMessage("添加成功！");
                         Func.log("add " + info);

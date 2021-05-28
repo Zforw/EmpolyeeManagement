@@ -9,7 +9,13 @@ import pers.zforw.empmgr.employee.HR;
 
 import java.io.IOException;
 
-
+/**
+ * @version: 1.0
+ * @author: zforw
+ * @date: 2021/05/27 7:07 下午
+ * @project: EmpMgr
+ * @description: 公司员工管理系统
+ */
 public class Main {
     static HR hr = new HR();
     protected static boolean isLogin = false;
