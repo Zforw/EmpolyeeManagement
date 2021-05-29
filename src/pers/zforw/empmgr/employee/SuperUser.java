@@ -7,29 +7,25 @@ package pers.zforw.empmgr.employee;
  * @project: Basic
  * @description:
  */
-public class SuperUser extends HR implements Authority{
-    @Override
-    public void add() {
+public class SuperUser extends HR implements Authority {
 
+    @Override
+    public boolean delete() {
+        return true;
     }
 
     @Override
-    public void delete() {
-
+    public boolean modify() {
+        return true;
     }
 
     @Override
-    public void find() {
-
+    public boolean passwd() {
+        return true;
     }
 
     @Override
-    public void findAll() {
-
-    }
-
-    @Override
-    public void edit() {
-
+    public boolean addEmp() {
+        return true;
     }
 }

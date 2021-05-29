@@ -1,9 +1,8 @@
 package pers.zforw.empmgr.employee;
 
 public interface Authority {
-    public abstract void add();
-    public abstract void delete();
-    public abstract void find();
-    public abstract void findAll();
-    public abstract void edit();
+    public abstract boolean delete();
+    public abstract boolean modify();
+    public abstract boolean passwd();
+    public abstract boolean addEmp();
 }

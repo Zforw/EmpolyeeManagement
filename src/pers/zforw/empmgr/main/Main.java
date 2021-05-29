@@ -17,9 +17,8 @@ import java.io.IOException;
  * @description: 公司员工管理系统
  */
 public class Main {
-    static HR hr = new HR();
+    static HR hr = null;
     protected static boolean isLogin = false;
-    static String[] root;
     protected static Display display = new Display();
     protected static Shell logShell = new Shell(display);
     protected static Shell mainShell = new Shell(display);
@@ -40,7 +39,7 @@ public class Main {
 
 
         try {
-            root = hr.loadFile(filePath + "output.txt");
+            hr.loadFile(filePath + "output.txt");
         } catch (IOException e) {
             MessageBox msg = new MessageBox(logShell, SWT.ICON_WARNING | SWT.YES);
             msg.setMessage(e.getMessage());

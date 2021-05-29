@@ -24,9 +24,9 @@ import java.util.TreeMap;
  */
 public class HR {
 
-    private int size;
-    static private String[] root;
-    TreeMap<Integer, Employee> emp = new TreeMap<>();
+    protected int size;
+    static protected String[] root;
+    static protected TreeMap<Integer, Employee> emp = new TreeMap<>();
     public HR() {
         size = 0;
     }
@@ -89,7 +89,6 @@ public class HR {
             e = new Manager(info);
         }
         emp.put(employee.getId(), e);
-        System.out.println("add " + e.getClass().getName());
         //emp.sort(Comparator.comparingInt(Employee::getId));
         return true;
     }
@@ -118,11 +117,10 @@ public class HR {
         size--;
         return emp.remove(id);
     }
-    //public int getSize() { return size; }
+
     public void modifyRank(int id, String rank) {
         emp.get(id).setRank(rank);
     }
-    //public void modifyBranch(int id, String branch) { emp.get(id).setBranch(branch); }
     public void modifySalary(int id, int salary) {
         emp.get(id).setSalary(salary);
     }
@@ -134,21 +132,39 @@ public class HR {
         return emp.values();
     }
 
+    HR Check(String name, String pass) {
+        HR h = null;
+        if (name.equals(root[0]) && pass.equals(root[1]))
+            h = new SuperUser();
+        for (Integer id : emp.keySet()) {
+            Employee employee = emp.get(id);
+            if (employee.getName().equals(name) && employee.getPassword().equals(pass)) {
+                if (employee.getBranch().equals("销售") && employee.getRank().equals("经理")) {
+                    h = new AdminSales();
+                } else if(employee.getRank().equals("经理")) {
+                    h = new AdminManager();
+                } else {
+                    h = new User();
+                }
+                return h;
+            }
+        }
+        return h;
+    }
 
     /**
      * @description:
-     * @param: [filePath]
+     * @param: [fileName]
      * @return:
      */
-    public String[] loadFile(String filePath) throws IOException{
-        BufferedReader br = new BufferedReader(new FileReader(filePath));
+    public void loadFile(String fileName) throws IOException{
+        BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
         root = Func.Split(Func.decrypt(br.readLine()));
         while ((line = br.readLine()) != null) {
             add(Func.decrypt(line));
         }
         br.close();
-        return root;
     }
     /**
      * @description:
