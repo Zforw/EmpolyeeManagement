@@ -1,5 +1,4 @@
 package pers.zforw.empmgr.employee;
-
 import pers.zforw.empmgr.main.Func;
 
 import java.io.BufferedReader;
@@ -23,12 +22,13 @@ import java.util.TreeMap;
  * @description: 员工管理类，实现对员工的添加，查询，编辑，删除，统计
  */
 public class HR {
-
-    protected int size;
-    static protected String[] root;
-    static protected TreeMap<Integer, Employee> emp = new TreeMap<>();
+    protected static int size = 0;
+    protected static String[] root;
+    protected static TreeMap<Integer, Employee> emp = new TreeMap<>();
+    public static String[] self;
+    public static String name;
     public HR() {
-        size = 0;
+
     }
     /**
      * @description:
@@ -131,11 +131,15 @@ public class HR {
     public Collection getIter() {
         return emp.values();
     }
+    public int getSize() { return size; }
 
-    HR Check(String name, String pass) {
-        HR h = null;
-        if (name.equals(root[0]) && pass.equals(root[1]))
+    public static HR Check(String name, String pass) {
+        HR h;
+        if (name.equals(root[0]) && pass.equals(root[1])) {
             h = new SuperUser();
+            HR.name = root[0];
+            return h;
+        }
         for (Integer id : emp.keySet()) {
             Employee employee = emp.get(id);
             if (employee.getName().equals(name) && employee.getPassword().equals(pass)) {
@@ -146,10 +150,12 @@ public class HR {
                 } else {
                     h = new User();
                 }
+                self = Func.Split(employee.getInfo());
+                HR.name = name;
                 return h;
             }
         }
-        return h;
+        return null;
     }
 
     /**

@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
+import pers.zforw.empmgr.employee.HR;
 
 /**
  * @version: 1.0
@@ -102,8 +103,10 @@ public class LoginShell {
  */
 
     private static void onLogin(String name, String pass) {
-        // 判断账号密码是否正确
-        if(Main.root[0].equals(name) && Main.root[1].equals(pass)){
+        HR h = HR.Check(name, pass);
+        // 判断账号密码是{否正确
+        if (h != null) {
+        //if (Main.root[0].equals(name) && Main.root[1].equals(pass)) {
             MessageBox msg = new MessageBox(Main.logShell, SWT.ICON_INFORMATION | SWT.YES );
 
             msg.setMessage("欢迎" + name + "登录!");
@@ -112,6 +115,8 @@ public class LoginShell {
             Main.isLogin = true;
             Func.log(name + " logged in");
 
+            Main.hr = h;
+            System.out.println(HR.name + " login sucess " + h.getSize());
             Main.mainShell.open();
             MainShell.initMainShell();
             Main.logShell.dispose();
@@ -120,7 +125,7 @@ public class LoginShell {
                 if(!Main.display.readAndDispatch())
                     Main.display.sleep();
             Main.display.dispose();
-        } else{
+        } else {
             MessageBox msg = new MessageBox(Main.logShell, SWT.ICON_WARNING | SWT.YES );
             msg.setMessage("用户名或密码错误！");
             msg.open();

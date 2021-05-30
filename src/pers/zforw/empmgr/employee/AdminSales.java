@@ -1,5 +1,7 @@
 package pers.zforw.empmgr.employee;
 
+import java.util.TreeMap;
+
 /**
  * @version: 1.0
  * @author: zforw
@@ -9,6 +11,7 @@ package pers.zforw.empmgr.employee;
  *      只能修改、删除销售人员，不能修改密码
  */
 public class AdminSales extends HR implements Authority {
+
     @Override
     public Employee delete(int id) {
         if (!emp.get(id).getRank().equals("职员"))
@@ -32,7 +35,22 @@ public class AdminSales extends HR implements Authority {
     }
 
     @Override
+    public boolean mdPass() {
+        return false;
+    }
+
+    @Override
     public boolean addEmp() {
         return false;
+    }
+
+    @Override
+    public boolean saveFe() {
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return "SalesManager";
     }
 }

@@ -24,7 +24,22 @@ public class User extends HR implements Authority {
     }
 
     @Override
+    public boolean mdPass() {
+        return false;
+    }
+
+    @Override
     public boolean addEmp() {
         return false;
+    }
+
+    @Override
+    public boolean saveFe() {
+        return false;
+    }
+
+    @Override
+    public String getName() {
+        return "User";
     }
 }

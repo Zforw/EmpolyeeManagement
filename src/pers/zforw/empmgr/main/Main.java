@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import pers.zforw.empmgr.employee.AdminManager;
 import pers.zforw.empmgr.employee.HR;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.io.IOException;
  * @description: 公司员工管理系统
  */
 public class Main {
-    static HR hr = null;
+    public static HR hr = new HR();
     protected static boolean isLogin = false;
     protected static Display display = new Display();
     protected static Shell logShell = new Shell(display);
@@ -48,6 +49,8 @@ public class Main {
             return;
         }
         Func.log("load file data.txt");
+
+
         LoginShell.login();
         logShell.open();
 
@@ -59,7 +62,7 @@ public class Main {
         if (!display.isDisposed()) {
             display.dispose();
         }
-        if (isLogin) Func.log(root[0] + " logged out");
+        if (isLogin) Func.log(HR.name + " logged out");
         try {
             hr.saveFile(filePath + "output.txt");
         } catch (IOException e) {

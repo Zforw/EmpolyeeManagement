@@ -25,7 +25,22 @@ public class SuperUser extends HR implements Authority {
     }
 
     @Override
+    public boolean mdPass() {
+        return true;
+    }
+
+    @Override
     public boolean addEmp() {
         return true;
+    }
+
+    @Override
+    public boolean saveFe() {
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return "SuperUser";
     }
 }
