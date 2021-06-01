@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +24,8 @@ import java.util.TreeMap;
  */
 public class HR {
     protected static int size = 0;
-    protected static String[] root;
     protected static TreeMap<Integer, Employee> emp = new TreeMap<>();
+    public static String[] root;
     public static String[] self;
     public static String name;
     public HR() {
@@ -36,7 +37,7 @@ public class HR {
      * @param: [id]
      * @return:
      */
-    public Employee find(int id) {
+    public Employee findById(int id) {
         if (!emp.containsKey(id)) return null;
         return emp.get(id);
     }
@@ -45,18 +46,24 @@ public class HR {
      * @param: [name]
      * @return:
      */
-    public ArrayList<Employee> find(String name) {
-        Map<Float, Employee> map = new HashMap<>();
+    public ArrayList<Employee> findByName(String name) {
+        Map<Float, ArrayList<Employee>> map = new HashMap<>();
         for (Integer id : emp.keySet()) {
+            ArrayList<Employee> list = new ArrayList<>();
             float similarity = Func.levenshtein(emp.get(id).getName(), name);
             if ((similarity > 0.15)) {
-                map.put(similarity, emp.get(id));
+                list = map.get(similarity);
+                list.add(emp.get(id));
+                map.put(similarity, list);
             }
         }
-        List<Map.Entry<Float, Employee>> list = new ArrayList<>(map.entrySet());
+        List<Map.Entry<Float, ArrayList<Employee>>> list = new ArrayList<>(map.entrySet());
         ArrayList<Employee> res = new ArrayList<>();
-        for (Map.Entry<Float, Employee> e : list) {
-            res.add(e.getValue());
+        //buggy
+        for (Map.Entry<Float, ArrayList<Employee>> e : list) {
+            for (Employee le : e.getValue()) {
+                res.add(le);
+            }
         }
         return res;
     }
@@ -72,7 +79,7 @@ public class HR {
     public boolean add(Employee employee) {
         System.out.println("given " + employee.getClass().getName());
         Employee e;
-        if(find(employee.getId()) != null)
+        if(findById(employee.getId()) != null)
             return false;
         size++;
         String info = employee.getInfo();
@@ -95,7 +102,7 @@ public class HR {
     public boolean add(String info) {
         Employee e;
         String[] args = Func.Split(info);
-        if(find(Integer.parseInt(args[2])) != null)
+        if(findById(Integer.parseInt(args[2])) != null)
             return false;
         size++;
         if(args[3].equals("开发")) {

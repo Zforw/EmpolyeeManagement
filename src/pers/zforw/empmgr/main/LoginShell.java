@@ -74,9 +74,7 @@ public class LoginShell {
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                if (keyEvent.keyCode == 13) {
-                    onLogin(nameText.getText(), passNumber.getText());
-                }
+
             }
         });
         // 为确定按钮设定监听

@@ -39,7 +39,7 @@ public class User extends HR implements Authority {
     }
 
     @Override
-    public String getName() {
+    public String auName() {
         return "User";
     }
 }

@@ -40,7 +40,7 @@ public class SuperUser extends HR implements Authority {
     }
 
     @Override
-    public String getName() {
+    public String auName() {
         return "SuperUser";
     }
 }

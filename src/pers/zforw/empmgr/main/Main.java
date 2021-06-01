@@ -70,6 +70,5 @@ public class Main {
             return;
         }
         Func.log("store file output.txt");
-
     }
 }

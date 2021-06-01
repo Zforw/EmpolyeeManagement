@@ -50,7 +50,7 @@ public class AdminSales extends HR implements Authority {
     }
 
     @Override
-    public String getName() {
+    public String auName() {
         return "SalesManager";
     }
 }

@@ -3,8 +3,6 @@ package pers.zforw.empmgr.main;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -26,6 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainShell {
+    public static digitVerifyListener digit = new digitVerifyListener();
+
     protected static void initMainShell() {
         Authority auth = (Authority) Main.hr;
 
@@ -139,10 +139,9 @@ public class MainShell {
         position.setItems("经理", "销售经理", "销售人员", "技术人员");
         position.setBounds(124, 270, 90, 30);
         position.select(0);
-        /* 只能输入整数
-            id.addVerifyListener(e -> e.do it = "0123456789".contains(e.text));
-            salary.addVerifyListener(e -> e.do it = "0123456789".contains(ee.text));
-        */
+        // 只能输入整数
+        id.addVerifyListener(digit);
+        salary.addVerifyListener(digit);
 
         /*
          *  根据权限决定显示哪些按钮
@@ -166,13 +165,13 @@ public class MainShell {
                     String tId = id.getText();
                     ArrayList<Employee> findList = new ArrayList<>();
                     if (tId.length() != 0) {
-                        Employee emm = Main.hr.find(Integer.parseInt(tId));
+                        Employee emm = Main.hr.findById(Integer.parseInt(tId));
                         if(emm != null) {
                             findList.add(emm);
                         }
                         Func.log("find " + tId);
                     } else if(tName.length() != 0){
-                        findList = Main.hr.find(tName);
+                        findList = Main.hr.findByName(tName);
                         Func.log("find " + tName);
                     }
                     if (findList.size() == 0) {
@@ -239,9 +238,13 @@ public class MainShell {
                 TableItem t = table.getItem(table.getSelectionIndex());
                 name.setText(t.getText(0));
                 gender.setText(t.getText(1));
+                id.removeVerifyListener(digit);
                 id.setText(t.getText(2));
+                id.addVerifyListener(digit);
                 branch.setText(t.getText(3));
+                salary.removeVerifyListener(digit);
                 salary.setText(t.getText(5));
+                salary.addVerifyListener(digit);
                 for (int i = 0;i < 6;i++) {
                     initInfo[i] = t.getText(i);
                 }
@@ -269,6 +272,7 @@ public class MainShell {
                 position.setText("销售经理");
             }
         });
+
         /*
          * @description: 
          * @param: []
@@ -279,6 +283,11 @@ public class MainShell {
             public void widgetSelected(SelectionEvent e) {
                 if (table.getSelectionCount() == 0) return;
                 MessageBox msg = new MessageBox(Main.mainShell, SWT.ICON_WARNING | SWT.NO | SWT.YES);
+                if (auth.auName().equals("SalesManager") && !initInfo[4].equals("职员")) {
+                    msg.setMessage("您只能修改本部门的职员信息!");
+                    msg.open();
+                    return;
+                }
                 TableItem t = table.getItem(table.getSelectionIndex());
 
                 msg.setMessage("是否要修改 " + t.getText());
@@ -286,8 +295,7 @@ public class MainShell {
                 if (rc != SWT.YES) {
                     return;
                 }
-                if (auth.getName().equals("SalesManager") && !initInfo[4].equals("职员"))
-                    return;
+
                 Func.log("edit " + t.getText() + " " + t.getText(2));
                 int id = Integer.parseInt(t.getText(2));
                 if (!position.getText().equals(initInfo[3])) {
@@ -319,7 +327,6 @@ public class MainShell {
                 eLabel.setText("密码相同");
             }
         });
-
 
         position.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -370,29 +377,30 @@ public class MainShell {
         });
 
 
-        if (!auth.getName().equals("SuperUser")) {
+        /*-----------------------个人信息页面-------------------------*/
+        if (!auth.auName().equals("SuperUser")) {
             Label $nLabel = new Label(group2, SWT.NONE);
-            $nLabel.setText("姓名:" + HR.self[0]);
-            $nLabel.setBounds(20, 20, 90, 20);
+            $nLabel.setText("姓名:\t\t\t" + HR.self[0]);
+            $nLabel.setBounds(20, 20, 190, 20);
             Label $gLabel = new Label(group2, SWT.NONE);
-            $gLabel.setText("性别:" + HR.self[1]);
-            $gLabel.setBounds(20, 50, 90, 20);
+            $gLabel.setText("性别:\t\t\t" + HR.self[1]);
+            $gLabel.setBounds(20, 50, 190, 20);
             Label $iLabel = new Label(group2, SWT.NONE);
-            $iLabel.setText("工号:" + HR.self[2]);
-            $iLabel.setBounds(20, 80, 90, 20);
+            $iLabel.setText("工号:\t\t\t" + HR.self[2]);
+            $iLabel.setBounds(20, 80, 190, 20);
             Label $bLabel = new Label(group2, SWT.NONE);
-            $bLabel.setText("部门:" + HR.self[3]);
-            $bLabel.setBounds(20, 110, 90, 20);
+            $bLabel.setText("部门:\t\t\t" + HR.self[3]);
+            $bLabel.setBounds(20, 110, 190, 20);
             Label $rLabel = new Label(group2, SWT.NONE);
-            $rLabel.setText("级别:" + HR.self[4]);
-            $rLabel.setBounds(20, 140, 90, 20);
+            $rLabel.setText("级别:\t\t\t" + HR.self[4]);
+            $rLabel.setBounds(20, 140, 190, 20);
             Label $sLabel = new Label(group2, SWT.NONE);
-            $sLabel.setText("工资:" + HR.self[5]);
-            $sLabel.setBounds(20, 170, 90, 20);
+            $sLabel.setText("工资:\t\t\t" + HR.self[5]);
+            $sLabel.setBounds(20, 170, 190, 20);
         } else {
             Label $nLabel = new Label(group2, SWT.NONE);
-            $nLabel.setText("root");
-            $nLabel.setBounds(20, 20, 90, 20);
+            $nLabel.setText("超级用户:\t\t\t" + HR.name);
+            $nLabel.setBounds(20, 170, 190, 20);
         }
         Label $pLabel = new Label(group2, SWT.NONE);
         $pLabel.setText("密码:");
@@ -407,9 +415,27 @@ public class MainShell {
         Label $eLabel = new Label(group2, SWT.NONE);
         $eLabel.setBounds(10, 270, 120, 20);
 
-        Button updPass = new Button(group2, SWT.NONE);
-        updPass.setText("重置密码");
-        updPass.setBounds(10, 300, 80, 20);
+        Button $updPass = new Button(group2, SWT.NONE);
+        $updPass.setText("重置密码");
+        $updPass.setBounds(80, 300, 80, 20);
+
+        $updPass.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if ($password.getText().length() == 0) {
+                    $eLabel.setText("密码不能为空");
+                } else if(!$password.getText().equals($nPassword.getText())) {
+                    $eLabel.setText("两次密码不一致");
+                } else {
+                    $eLabel.setText("修改成功");
+                    if (auth.auName().equals("SuperUser")) {
+                        HR.root[1] = $password.getText();
+                    } else {
+                        Main.hr.modifyPass(Integer.parseInt(HR.self[2]), $password.getText());
+                    }
+                }
+            }
+        });
 
         tabEdit.setControl(group1);
         tabInfo.setControl(group2);

@@ -8,5 +8,5 @@ public interface Authority {
     public abstract boolean mdPass();
     public abstract boolean addEmp();
     public abstract boolean saveFe();
-    public abstract String getName();
+    public abstract String auName();
 }

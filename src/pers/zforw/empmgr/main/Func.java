@@ -143,16 +143,16 @@ public class Func {
     }
 
     /*
-     * @description:
+     * @description: 计算两个字符串之间的相似度
      * @param: [str1, str2]
      * @return:
      */
     public static float levenshtein(String str1, String str2) {
         int len1 = str1.length();
         int len2 = str2.length();
-        //建立上面说的数组，比字符长度大一个空间
+        //建立数组
         int[][] dif = new int[len1 + 1][len2 + 1];
-        //赋初值，步骤B。
+        //赋初值
         for (int a = 0; a <= len1; a++) {
             dif[a][0] = a;
         }
