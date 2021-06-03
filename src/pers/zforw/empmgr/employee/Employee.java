@@ -19,7 +19,7 @@ public class Employee {
     private String password;
     private final String name;
     private final String gender;
-    private String branch;
+    private final String branch;
     private String rank;
 
     public Employee(Employee employee) {
@@ -74,10 +74,6 @@ public class Employee {
 
     protected void setPassword(String password) {
         this.password = password;
-    }
-
-    protected void setBranch(String branch) {
-        this.branch = branch;
     }
 
     protected void setRank(String rank) {

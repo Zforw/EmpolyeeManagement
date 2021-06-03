@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -61,9 +60,7 @@ public class HR {
         List<Map.Entry<Float, ArrayList<Employee>>> list = new ArrayList<>(map.entrySet());
         ArrayList<Employee> res = new ArrayList<>();
         for (Map.Entry<Float, ArrayList<Employee>> e : list) {
-            for (Employee le : e.getValue()) {
-                res.add(le);
-            }
+            res.addAll(e.getValue());
         }
         return res;
     }
@@ -76,11 +73,11 @@ public class HR {
      * @param: [info]
      * @return: 是否添加成功
      */
-    public boolean add(Employee employee) {
+    public void add(Employee employee) {
         System.out.println("given " + employee.getClass().getName());
         Employee e;
         if(findById(employee.getId()) != null)
-            return false;
+            return;
         size++;
         String info = employee.getInfo();
         String branch = employee.getBranch();
@@ -97,7 +94,6 @@ public class HR {
         }
         emp.put(employee.getId(), e);
         //emp.sort(Comparator.comparingInt(Employee::getId));
-        return true;
     }
     public boolean add(String info) {
         Employee e;
