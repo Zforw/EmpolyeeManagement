@@ -49,17 +49,17 @@ public class HR {
     public ArrayList<Employee> findByName(String name) {
         Map<Float, ArrayList<Employee>> map = new HashMap<>();
         for (Integer id : emp.keySet()) {
-            ArrayList<Employee> list = new ArrayList<>();
+            ArrayList<Employee> list;
             float similarity = Func.levenshtein(emp.get(id).getName(), name);
             if ((similarity > 0.15)) {
-                list = map.get(similarity);
+                if (map.containsKey(similarity)) list = map.get(similarity);
+                else list = new ArrayList<>();
                 list.add(emp.get(id));
                 map.put(similarity, list);
             }
         }
         List<Map.Entry<Float, ArrayList<Employee>>> list = new ArrayList<>(map.entrySet());
         ArrayList<Employee> res = new ArrayList<>();
-        //buggy
         for (Map.Entry<Float, ArrayList<Employee>> e : list) {
             for (Employee le : e.getValue()) {
                 res.add(le);

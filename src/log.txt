@@ -1550,3 +1550,6 @@
 [2021-06-01 11:06:05]su logged in
 [2021-06-01 11:06:28]load file data.txt
 [2021-06-01 11:06:30]su logged in
+[2021-06-03 14:18:43]load file data.txt
+[2021-06-03 14:18:46]su logged in
+[2021-06-03 14:18:51]find zforw
