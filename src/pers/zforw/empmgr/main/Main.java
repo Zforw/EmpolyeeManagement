@@ -5,7 +5,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import pers.zforw.empmgr.employee.AdminManager;
 import pers.zforw.empmgr.employee.HR;
 
 import java.io.IOException;
@@ -28,15 +27,12 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-
-        /*
         OS = System.getProperty("os.name").toLowerCase();
         if(OS.indexOf("windows") > 0) {
-
+            filePath = "";
         } else {
 
         }
-         */
 
 
         try {

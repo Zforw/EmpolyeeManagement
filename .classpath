@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="var" path="MAVEN_REPOSITORY/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar"/>
+	<classpathentry kind="var" path="USER_HOME/eclipse/java-2021-03/commons-logging-1.2/commons-logging-1.2.jar"/>
+	<classpathentry kind="var" path="USER_HOME/eclipse/java-2021-03/apache-log4j-2.12.1-bin/log4j-api-2.12.1.jar"/>
+	<classpathentry kind="var" path="USER_HOME/eclipse/java-2021-03/apache-log4j-2.12.1-bin/log4j-core-2.12.1.jar"/>
+	<classpathentry kind="var" path="USER_HOME/eclipse/java-2021-03/swt-4/swt.jar"/>
+	<classpathentry kind="output" path="out/production/EmpMgr"/>
+</classpath>
