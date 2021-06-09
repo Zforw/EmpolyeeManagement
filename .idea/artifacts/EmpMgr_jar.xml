@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="EmpMgr:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/EmpMgr_jar</output-path>
+    <root id="archive" name="EmpMgr.jar">
+      <element id="module-output" name="EmpMgr" />
+      <element id="extracted-dir" path="$USER_HOME$/eclipse/java-2021-03/commons-logging-1.2/commons-logging-1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/eclipse/java-2021-03/swt-4/swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/eclipse/java-2021-03/apache-log4j-2.12.1-bin/log4j-api-2.12.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/eclipse/java-2021-03/apache-log4j-2.12.1-bin/log4j-core-2.12.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

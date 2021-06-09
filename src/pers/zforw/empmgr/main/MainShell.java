@@ -45,7 +45,6 @@ public class MainShell {
         countLabel.setBounds(200, 100, 200, 80);
         countLabel.setText(HR.getNum());
 
-
         Button findButton = new Button(group1, SWT.NONE);
         Button saveButton = new Button(group1, SWT.NONE);
         Button deleteButton = new Button(group1, SWT.NONE);
@@ -146,10 +145,10 @@ public class MainShell {
         /*
          *  根据权限决定显示哪些按钮
          */
-        if (!auth.delete()) deleteButton.setVisible(false);
-        if (!auth.addEmp()) addButton.setVisible(false);
-        if (!auth.modify()) modifyButton.setVisible(false);
-        if (!auth.saveFe()) saveButton.setVisible(false);
+        deleteButton.setVisible(auth.delete());
+        addButton.setVisible(auth.addEmp());
+        modifyButton.setVisible(auth.modify());
+        saveButton.setVisible(auth.saveFe());
         if (!auth.passwd()) {
             password.setVisible(false);
             nPassword.setVisible(false);
@@ -219,7 +218,7 @@ public class MainShell {
         saveButton.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent e){
                 try {
-                    Main.hr.saveFile(Main.filePath + "output.txt");
+                    Main.hr.saveFile(Main.filePath + "data.txt");
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }

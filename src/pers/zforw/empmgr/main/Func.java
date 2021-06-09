@@ -112,7 +112,7 @@ public class Func {
 
 
     /*
-     * @description:
+     * @description: 将字符串转换为一个大整数
      * @param: [msg]
      * @return:
      */
@@ -120,14 +120,14 @@ public class Func {
         msg = java.net.URLEncoder.encode(msg,"GBK");
         byte[] text = msg.getBytes("GBK");//将字符串转换成byte类型数组，实质是各个字符的二进制形式
         for (int i = 0;i < text.length;i++) {
-            text[i] += 23;
+            text[i] += 23;//偏移
         }
         BigInteger m = new BigInteger(text);
         return m.toString();
     }
 
     /*
-     * @description:
+     * @description: 解密函数
      * @param: [encoded]
      * @return:
      */

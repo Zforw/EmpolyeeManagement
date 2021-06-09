@@ -29,14 +29,12 @@ public class Main {
 
         OS = System.getProperty("os.name").toLowerCase();
         if(OS.indexOf("windows") > 0) {
-            filePath = "";
-        } else {
-
+            filePath = "C:\\";
         }
 
 
         try {
-            hr.loadFile(filePath + "output.txt");
+            hr.loadFile(filePath + "data.txt");
         } catch (IOException e) {
             MessageBox msg = new MessageBox(logShell, SWT.ICON_WARNING | SWT.YES);
             msg.setMessage(e.getMessage());
@@ -60,11 +58,11 @@ public class Main {
         }
         if (isLogin) Func.log(HR.name + " logged out");
         try {
-            hr.saveFile(filePath + "output.txt");
+            hr.saveFile(filePath + "data.txt");
         } catch (IOException e) {
             Func.log(e.getMessage());
             return;
         }
-        Func.log("store file output.txt");
+        Func.log("store file data.txt");
     }
 }

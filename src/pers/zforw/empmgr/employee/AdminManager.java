@@ -16,11 +16,6 @@ public class AdminManager extends HR implements Authority {
             return null;
         return super.delete(id);
     }
-    /*
-     * @description: modify
-     * @param:
-     * @return: 
-     */
 
     @Override
     public boolean delete() {

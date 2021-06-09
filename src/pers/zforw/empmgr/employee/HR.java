@@ -2,6 +2,7 @@ package pers.zforw.empmgr.employee;
 import pers.zforw.empmgr.main.Func;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -113,7 +114,6 @@ public class HR {
             e = new Manager(info);
         }
         emp.put(Integer.parseInt(args[2]), e);
-        //emp.sort(Comparator.comparingInt(Employee::getId));
         return true;
     }
     public Employee delete(int id) {
@@ -167,6 +167,12 @@ public class HR {
      * @return:
      */
     public void loadFile(String fileName) throws IOException{
+        File file = new File(fileName);
+        if(!file.exists()) {
+            file.createNewFile();
+            root = new String[]{"su", "123"};
+            return;
+        }
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
         root = Func.Split(Func.decrypt(br.readLine()));
@@ -184,13 +190,8 @@ public class HR {
         OutputStream os = new FileOutputStream(fileName);
         PrintWriter pw = new PrintWriter(os);
         pw.println(Func.encrypt(root[0] + " " + root[1]));
-        String[] buf = new String[size];
-        int i = 0;
         for(Integer id : emp.keySet()) {
-            buf[i++] = Func.encrypt(emp.get(id).getInfo());
-        }
-        for (i = 0; i < size; i++) {
-            pw.println(buf[i]);
+            pw.println(Func.encrypt(emp.get(id).getInfo()));
         }
         pw.close();
         os.close();
