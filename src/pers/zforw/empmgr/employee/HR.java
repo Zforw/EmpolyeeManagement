@@ -8,6 +8,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,14 +29,17 @@ import java.util.TreeMap;
  * @description: 员工管理类，实现对员工的添加，查询，编辑，删除，统计
  */
 public class HR {
+    static final String DB_url = "jdbc:mysql://localhost:3306/EMPLOYEE";
+    static final String username = "root";
+    static final String password = "1784951344";
+
     protected static int size = 0;
     protected static TreeMap<Integer, Employee> emp = new TreeMap<>();
     public static String[] root;
     public static String[] self;
     public static String name;
-    public HR() {
 
-    }
+    public HR() {}
     /**
      * @description:
      *      返回id对应的员工对象
@@ -96,11 +105,11 @@ public class HR {
         emp.put(employee.getId(), e);
         //emp.sort(Comparator.comparingInt(Employee::getId));
     }
-    public boolean add(String info) {
+    public Employee add(String info) {
         Employee e;
         String[] args = Func.Split(info);
         if(findById(Integer.parseInt(args[2])) != null)
-            return false;
+            return null;
         size++;
         if(args[3].equals("开发")) {
             e = new Technician(info);
@@ -114,7 +123,7 @@ public class HR {
             e = new Manager(info);
         }
         emp.put(Integer.parseInt(args[2]), e);
-        return true;
+        return e;
     }
     public Employee delete(int id) {
         size--;
@@ -170,14 +179,42 @@ public class HR {
         File file = new File(fileName);
         if(!file.exists()) {
             file.createNewFile();
+            Func.log("data file lost, create from database");
             root = new String[]{"su", "123"};
-            return;
+            try {
+                OutputStream os = new FileOutputStream(fileName);
+                PrintWriter pw = new PrintWriter(os);
+                pw.println(Func.encrypt("su 123"));
+                //1.注册JDBC驱动
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                //2.获取数据库连接
+                Connection connection = DriverManager.getConnection(DB_url, username, password);
+                //3.操作数据库
+                Statement statement = connection.createStatement();//获取操作数据库的对象
+                String sql = "select * from info";//定义数据库语句
+                ResultSet resultSet = statement.executeQuery(sql);//执行数据库语句获取结果集
+                while (resultSet.next()) {
+                    String info = resultSet.getString(1) + " " + resultSet.getString(2) +
+                            " " + resultSet.getString(3) + " " + resultSet.getString(4) +
+                            " " + resultSet.getString(5) + " " + resultSet.getString(6) +
+                            " " + resultSet.getString(7);
+                    pw.println(Func.encrypt(info));
+                }
+                pw.close();
+                os.close();
+                //4.关闭结果集，数据库操作对象，数据库连接
+                resultSet.close();
+                statement.close();
+                connection.close();
+            }catch (ClassNotFoundException | SQLException exception) {
+                exception.printStackTrace();
+            }
         }
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
         root = Func.Split(Func.decrypt(br.readLine()));
         while ((line = br.readLine()) != null) {
-            add(Func.decrypt(line));
+            Employee e = add(Func.decrypt(line));
         }
         br.close();
     }
@@ -186,13 +223,21 @@ public class HR {
      * @param: [fileName]
      * @return:
      */
-    public void saveFile(String fileName) throws IOException {
+    public void saveFile(String fileName) throws IOException, SQLException, ClassNotFoundException {
         OutputStream os = new FileOutputStream(fileName);
         PrintWriter pw = new PrintWriter(os);
         pw.println(Func.encrypt(root[0] + " " + root[1]));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        //2.获取数据库连接
+        Connection connection = DriverManager.getConnection(DB_url, username, password);
+        //3.操作数据库
+        Statement statement = connection.createStatement();//获取操作数据库的对象
+        String sql = "select * from info";//定义数据库语句
         for(Integer id : emp.keySet()) {
             pw.println(Func.encrypt(emp.get(id).getInfo()));
+
         }
+
         pw.close();
         os.close();
     }

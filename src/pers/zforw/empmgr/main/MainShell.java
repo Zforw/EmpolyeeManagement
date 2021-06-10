@@ -21,6 +21,7 @@ import pers.zforw.empmgr.employee.HR;
 import pers.zforw.empmgr.employee.Technician;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MainShell {
@@ -156,7 +157,6 @@ public class MainShell {
             npLabel.setVisible(false);
         }
         System.out.println(auth.getClass().getName());
-
         findButton.addSelectionListener(new SelectionAdapter(){
                 @Override
                 public void widgetSelected(SelectionEvent e) {
@@ -219,7 +219,7 @@ public class MainShell {
             public void widgetSelected(SelectionEvent e){
                 try {
                     Main.hr.saveFile(Main.filePath + "data.txt");
-                } catch (IOException ioException) {
+                } catch (IOException | SQLException | ClassNotFoundException ioException) {
                     ioException.printStackTrace();
                 }
             }
@@ -362,9 +362,9 @@ public class MainShell {
                     String info =  name.getText() + " " + gender.getItem(gender.getSelectionIndex()) + " " + id.getText()
                             + " " + branch.getText() + " " +
                             rank.getText() + " " + salary.getText() + " " + password.getText();
-                    boolean p = Main.hr.add(info);
+                    Employee p = Main.hr.add(info);
                     MessageBox msg = new MessageBox(Main.mainShell, SWT.YES | SWT.ICON_INFORMATION);
-                    if (p) {
+                    if (p != null) {
                         msg.setMessage("添加成功！");
                         Func.log("add " + info);
                     } else {

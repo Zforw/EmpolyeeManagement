@@ -1,13 +1,12 @@
 package pers.zforw.empmgr.main;
 
+import pers.zforw.empmgr.employee.HR;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-
-import pers.zforw.empmgr.employee.HR;
-
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @version: 1.0
@@ -26,12 +25,10 @@ public class Main {
     protected static String OS;
 
     public static void main(String[] args) throws IOException {
-
         OS = System.getProperty("os.name").toLowerCase();
         if(OS.indexOf("windows") > 0) {
             filePath = "C:\\";
         }
-
 
         try {
             hr.loadFile(filePath + "data.txt");
@@ -59,7 +56,7 @@ public class Main {
         if (isLogin) Func.log(HR.name + " logged out");
         try {
             hr.saveFile(filePath + "data.txt");
-        } catch (IOException e) {
+        } catch (IOException | SQLException | ClassNotFoundException e) {
             Func.log(e.getMessage());
             return;
         }
