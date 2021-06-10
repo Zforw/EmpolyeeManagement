@@ -3,6 +3,7 @@ package pers.zforw.empmgr.main;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -44,7 +45,19 @@ public class MainShell {
         Group group3 = new Group(folder, SWT.NONE);
         Label countLabel = new Label(group3, SWT.NONE);
         countLabel.setBounds(200, 100, 200, 80);
-        countLabel.setText(HR.getNum());
+        folder.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent selectionEvent) {
+                if(folder.getSelection()[0] == tabCount) {
+                    countLabel.setText(HR.getNum());
+                }
+            }
+            @Override
+            public void widgetDefaultSelected(SelectionEvent selectionEvent) {
+
+            }
+        });
+
 
         Button findButton = new Button(group1, SWT.NONE);
         Button saveButton = new Button(group1, SWT.NONE);
@@ -241,6 +254,7 @@ public class MainShell {
                 id.setText(t.getText(2));
                 id.addVerifyListener(digit);
                 branch.setText(t.getText(3));
+                position.setText(t.getText(3));
                 salary.removeVerifyListener(digit);
                 salary.setText(t.getText(5));
                 salary.addVerifyListener(digit);
@@ -249,6 +263,7 @@ public class MainShell {
                 }
                 if(branch.getText().equals("开发")) {
                     rank.setItems(Technician.rank);
+                    rank.setText(t.getText(4));
                 } else if(branch.getText().equals("销售")) {
                     rank.setItems("经理", "职员");
                 } else {

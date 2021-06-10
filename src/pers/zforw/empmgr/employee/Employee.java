@@ -30,7 +30,9 @@ public class Employee {
         rank = employee.rank;
         salary = employee.salary;
         password = employee.password;
+        System.out.println("Employee.34");
     }
+    /*
     public Employee(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
         this.name = name;
         this.gender = gender;
@@ -39,6 +41,7 @@ public class Employee {
         this.rank = rank;
         this.salary = salary;
         this.password = password;
+        this.status = "insert";
         tot++;
         if (gender.equals("男")) {
             male++;
@@ -46,6 +49,8 @@ public class Employee {
             female++;
         }
     }
+
+     */
     public Employee(String info) {
         String[] array = Func.Split(info);
         this.name = array[0];
@@ -70,14 +75,17 @@ public class Employee {
 
     protected void setSalary(int salary) {
         this.salary = salary;
+        HR.Status = "update";
     }
 
     protected void setPassword(String password) {
         this.password = password;
+        HR.Status = "update";
     }
 
     protected void setRank(String rank) {
         this.rank = rank;
+        HR.Status = "update";
     }
 
     public static int getMale() {
@@ -118,5 +126,10 @@ public class Employee {
 
     public static int getTot() { return tot; }
 
+    protected Employee delete() {
+        tot--;
+        HR.Status = "delete";
+        return this;
+    };
 
 }

@@ -12,10 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public class Technician extends Employee {
     public final static String[] rank = {"P4", "P5", "P6", "P7"};
     private static int total = 0;
-    public Technician(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
-        super(name, gender, id, branch, rank, salary, password);
-        total++;
-    }
 
     public Technician(String info) {
         super(info);
@@ -24,5 +20,9 @@ public class Technician extends Employee {
 
     public static int getTotal() {
         return total;
+    }
+    public Employee delete() {
+        total--;
+        return super.delete();
     }
 }

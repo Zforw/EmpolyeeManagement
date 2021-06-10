@@ -33,11 +33,13 @@ public class HR {
     static final String username = "root";
     static final String password = "1784951344";
 
+    protected static String Status = "insert";
     protected static int size = 0;
     protected static TreeMap<Integer, Employee> emp = new TreeMap<>();
     public static String[] root;
     public static String[] self;
     public static String name;
+    protected ArrayList<String> changes = new ArrayList<>();
 
     public HR() {}
     /**
@@ -90,6 +92,7 @@ public class HR {
             return;
         size++;
         String info = employee.getInfo();
+        if (!Status.equals("init"))changes.add(Status + " " + info);
         String branch = employee.getBranch();
         if(branch.equals("开发")) {
             e = new Technician(info);
@@ -110,6 +113,7 @@ public class HR {
         String[] args = Func.Split(info);
         if(findById(Integer.parseInt(args[2])) != null)
             return null;
+        if (!Status.equals("init"))changes.add(Status + " " + info);
         size++;
         if(args[3].equals("开发")) {
             e = new Technician(info);
@@ -125,19 +129,35 @@ public class HR {
         emp.put(Integer.parseInt(args[2]), e);
         return e;
     }
+    /*
+     * @description:删除员工
+     *  1、个数减一
+     *  2、Employee类和对应类的总数减一
+     *  3、将信息保存到changes
+     *  4、返回删除的Employee
+     * @param: [id]
+     * @return:
+     */
     public Employee delete(int id) {
         size--;
+        changes.add("delete " + emp.get(id).delete().getInfo());
         return emp.remove(id);
     }
 
     public void modifyRank(int id, String rank) {
-        emp.get(id).setRank(rank);
+        Employee e = emp.get(id);
+        e.setRank(rank);
+        changes.add(Status + " " + e.getInfo());
     }
     public void modifySalary(int id, int salary) {
-        emp.get(id).setSalary(salary);
+        Employee e = emp.get(id);
+        e.setSalary(salary);
+        changes.add(Status + " " + e.getInfo());
     }
     public void modifyPass(int id, String pass) {
-        emp.get(id).setPassword(pass);
+        Employee e = emp.get(id);
+        e.setPassword(pass);
+        changes.add(Status + " " + e.getInfo());
     }
 
     public Collection getIter() {
@@ -212,10 +232,12 @@ public class HR {
         }
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
+        Status = "init";
         root = Func.Split(Func.decrypt(br.readLine()));
         while ((line = br.readLine()) != null) {
             Employee e = add(Func.decrypt(line));
         }
+        Status = "insert";
         br.close();
     }
     /**
@@ -237,7 +259,10 @@ public class HR {
             pw.println(Func.encrypt(emp.get(id).getInfo()));
 
         }
-
+        for (String s : changes) {
+            System.out.println(s);
+        }
+        changes.clear();
         pw.close();
         os.close();
     }

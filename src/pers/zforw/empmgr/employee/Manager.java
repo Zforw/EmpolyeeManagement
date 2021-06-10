@@ -11,10 +11,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Manager extends Employee {
     private static int total = 0;
-    public Manager(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
-        super(name, gender, id, branch, rank, salary, password);
-        total++;
-    }
 
     public Manager(String info) {
         super(info);
@@ -22,5 +18,9 @@ public class Manager extends Employee {
     }
     public static int getTotal() {
         return total;
+    }
+    public Employee delete() {
+        total--;
+        return super.delete();
     }
 }
