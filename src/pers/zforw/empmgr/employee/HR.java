@@ -31,7 +31,7 @@ import java.util.TreeMap;
 public class HR {
     static final String DB_url = "jdbc:mysql://localhost:3306/EMPLOYEE";
     static final String username = "root";
-    static final String password = "1784951344";
+    static final String password = "zfwixeon";
 
     protected static String Status = "insert";
     protected static int size = 0;
@@ -234,7 +234,7 @@ public class HR {
         }
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
-        Status = "init";
+        Status = "insert";
         root = Func.Split(Func.decrypt(br.readLine()));
         while ((line = br.readLine()) != null) {
             Employee e = add(Func.decrypt(line));

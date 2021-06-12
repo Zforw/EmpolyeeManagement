@@ -1575,3 +1575,15 @@
 [2021-06-12 14:53:23]su logged in
 [2021-06-12 14:53:38]su logged out
 [2021-06-12 14:53:38]store file data.txt
+[2021-06-12 17:17:15]load file data.txt
+[2021-06-12 17:17:18]su logged in
+[2021-06-12 17:17:21]su logged out
+[2021-06-12 17:17:22]Access denied for user 'root'@'localhost' (using password: YES)
+[2021-06-12 17:20:14]load file data.txt
+[2021-06-12 17:20:17]su logged in
+[2021-06-12 17:20:23]su logged out
+[2021-06-12 17:20:23]store file data.txt
+[2021-06-12 17:20:43]load file data.txt
+[2021-06-12 17:20:46]su logged in
+[2021-06-12 17:20:51]su logged out
+[2021-06-12 17:20:51]store file data.txt
