@@ -1587,3 +1587,7 @@
 [2021-06-12 17:20:46]su logged in
 [2021-06-12 17:20:51]su logged out
 [2021-06-12 17:20:51]store file data.txt
+[2021-06-12 22:17:50]load file data.txt
+[2021-06-12 22:17:52]su logged in
+[2021-06-12 22:17:54]su logged out
+[2021-06-12 22:17:54]store file data.txt

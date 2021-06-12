@@ -234,7 +234,7 @@ public class HR {
         }
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
-        Status = "insert";
+        Status = "init";
         root = Func.Split(Func.decrypt(br.readLine()));
         while ((line = br.readLine()) != null) {
             Employee e = add(Func.decrypt(line));
