@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @description:
  */
 public class SalesManager extends Employee {
+    public final static String[] rank = {"经理"};
     private static int total = 0;
 
     public SalesManager(String info) {
@@ -23,4 +24,5 @@ public class SalesManager extends Employee {
         total--;
         return super.delete();
     }
+
 }

@@ -39,6 +39,11 @@ public class User extends HR implements Authority {
     }
 
     @Override
+    public boolean mdRank() {
+        return false;
+    }
+
+    @Override
     public String auName() {
         return "User";
     }

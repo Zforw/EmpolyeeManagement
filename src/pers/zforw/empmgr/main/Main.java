@@ -5,6 +5,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -14,6 +16,7 @@ import java.sql.SQLException;
  * @date: 2021/05/27 7:07 下午
  * @project: EmpMgr
  * @description: 公司员工管理系统
+ * java -XstartOnFirstThread -jar xxx.jar
  */
 public class Main {
     public static HR hr = new HR();
@@ -29,6 +32,14 @@ public class Main {
         if(OS.indexOf("windows") > 0) {
             filePath = "C:\\";
         }
+
+        /*
+        File directory = new File("");//设定为当前文件夹
+        try{
+            System.out.println(directory.getCanonicalPath());//获取标准的路径
+            System.out.println(directory.getAbsolutePath());//获取绝对路径
+        }catch(Exception e){}
+         */
 
         try {
             hr.loadFile(filePath + "data.txt");

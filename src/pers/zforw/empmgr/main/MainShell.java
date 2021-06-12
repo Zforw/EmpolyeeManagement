@@ -19,6 +19,9 @@ import org.eclipse.swt.widgets.Text;
 import pers.zforw.empmgr.employee.Authority;
 import pers.zforw.empmgr.employee.Employee;
 import pers.zforw.empmgr.employee.HR;
+import pers.zforw.empmgr.employee.Manager;
+import pers.zforw.empmgr.employee.SalesClerk;
+import pers.zforw.empmgr.employee.SalesManager;
 import pers.zforw.empmgr.employee.Technician;
 
 import java.io.IOException;
@@ -26,6 +29,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MainShell {
+    public final static int maxId = 5;
+    public final static int maxSalary = 7;
+    public final static int maxPass = 15;
     public static digitVerifyListener digit = new digitVerifyListener();
 
     protected static void initMainShell() {
@@ -128,7 +134,7 @@ public class MainShell {
         Label rLabel = new Label(group1, SWT.NONE);
         rLabel.setText("级别:");
         rLabel.setBounds(20, 140, 90, 20);
-        Combo rank = new Combo(group1, SWT.NONE);
+        Combo rank = new Combo(group1, SWT.NONE | SWT.READ_ONLY);
         rank.setBounds(117, 140, 100, 30);
         Label sLabel = new Label(group1, SWT.NONE);
         sLabel.setText("工资:");
@@ -148,10 +154,15 @@ public class MainShell {
         Label eLabel = new Label(group1, SWT.NONE);
         eLabel.setBounds(10, 270, 120, 20);
 
+        id.addVerifyListener(verifyEvent -> verifyEvent.doit = id.getText().length() < maxId);
+        salary.addVerifyListener(verifyEvent -> verifyEvent.doit = salary.getText().length() < maxSalary);
+        password.addVerifyListener(verifyEvent -> verifyEvent.doit = password.getText().length() < maxPass);
+        nPassword.addVerifyListener(verifyEvent -> verifyEvent.doit = nPassword.getText().length() < maxPass);
+
         Combo position = new Combo(group1, SWT.DROP_DOWN | SWT.READ_ONLY);
         position.setItems("经理", "销售经理", "销售人员", "技术人员");
         position.setBounds(124, 270, 90, 30);
-        position.select(0);
+        //position.select(0);
         // 只能输入整数
         id.addVerifyListener(digit);
         salary.addVerifyListener(digit);
@@ -254,22 +265,29 @@ public class MainShell {
                 id.setText(t.getText(2));
                 id.addVerifyListener(digit);
                 branch.setText(t.getText(3));
-                position.setText(t.getText(3));
+                position.setText(HR.getPosition(t.getText(3), t.getText(4)));
+
+                if(t.getText(3).equals("开发")) {
+                    //position.setText("技术人员");
+                    rank.setItems(Technician.rank);
+                } else if (t.getText(3).equals("管理")) {
+                    //position.setText("经理");
+                    rank.setItems(Manager.rank);
+                } else if (t.getText(4).equals("职员")) {
+                    //position.setText("销售人员");
+                    rank.setItems(SalesClerk.rank);
+                } else {
+                    //position.setText("销售经理");
+                    rank.setItems(SalesManager.rank);
+                }
+
                 salary.removeVerifyListener(digit);
                 salary.setText(t.getText(5));
                 salary.addVerifyListener(digit);
                 for (int i = 0;i < 6;i++) {
                     initInfo[i] = t.getText(i);
                 }
-                if(branch.getText().equals("开发")) {
-                    rank.setItems(Technician.rank);
-                    rank.setText(t.getText(4));
-                } else if(branch.getText().equals("销售")) {
-                    rank.setItems("经理", "职员");
-                } else {
-                    rank.setItems("经理");
-                }
-                rank.setText(t.getText(4));
+                rank.select(Employee.getSelect(t.getText(4)));
             }
         });
 
@@ -277,15 +295,6 @@ public class MainShell {
 
         password.addModifyListener(modifyEvent -> modifiedPassword[0] = true);
 
-        rank.addModifyListener(modifyEvent -> {
-            if (!branch.getText().equals("销售"))
-                return;
-            if (rank.getText().equals("职员")) {
-                position.setText("销售人员");
-            } else {
-                position.setText("销售经理");
-            }
-        });
 
         /*
          * @description: 
@@ -297,8 +306,30 @@ public class MainShell {
             public void widgetSelected(SelectionEvent e) {
                 if (table.getSelectionCount() == 0) return;
                 MessageBox msg = new MessageBox(Main.mainShell, SWT.ICON_WARNING | SWT.NO | SWT.YES);
-                if (auth.auName().equals("SalesManager") && !initInfo[4].equals("职员")) {
+                if (auth.auName().equals("SalesManager") && (!initInfo[4].equals("职员")||
+                        !position.getText().equals("销售人员"))) {
                     msg.setMessage("您只能修改本部门的职员信息!");
+                    msg.open();
+                    return;
+                }
+                if (!name.getText().equals(initInfo[0]) || !gender.getText().equals(initInfo[1]) || !id.getText().equals(initInfo[2]))
+                {
+                    msg.setMessage("不可修改姓名、性别、工号！");
+                    msg.open();
+                    name.setText(initInfo[0]);
+                    gender.setText(initInfo[1]);
+                    id.setText(initInfo[2]);
+                    return;
+                }
+                if (!password.getText().isEmpty() && !auth.mdPass())
+                {
+                    msg.setMessage("不可修改密码！");
+                    msg.open();
+                    return;
+                }
+                if (!rank.getText().equals(initInfo[4]) && !auth.mdRank())
+                {
+                    msg.setMessage("不可修改职位！");
                     msg.open();
                     return;
                 }
@@ -309,25 +340,34 @@ public class MainShell {
                 if (rc != SWT.YES) {
                     return;
                 }
-
-                Func.log("edit " + t.getText() + " " + t.getText(2));
-                int id = Integer.parseInt(t.getText(2));
-                if (!position.getText().equals(initInfo[3])) {
-                    Employee employee = new Employee(Main.hr.delete(Integer.parseInt(initInfo[2])));
-                    Main.hr.add(employee);
-                }else {
-                    if (!rank.getText().equals(initInfo[4])) {
+                int tId = Integer.parseInt(t.getText(2));
+                if (!position.getText().equals(HR.getPosition(initInfo[3], initInfo[4]))) {
+                    if (auth.auName().equals("SuperUser") || auth.auName().equals("Manager")){
+                        Main.hr.restore(Main.hr.delete(tId), branch.getText(), rank.getText(), salary.getText(), password.getText());
+                        initInfo[3] = branch.getText();
                         initInfo[4] = rank.getText();
-                        Main.hr.modifyRank(id, rank.getText());
-                    }
-                    if (!salary.getText().equals(initInfo[5])) {
                         initInfo[5] = salary.getText();
-                        Main.hr.modifySalary(id, Integer.parseInt(salary.getText()));
+                        Func.log("modify " + t.getText() + " " + t.getText(2));
+                        t.setText(initInfo);
+                    } else {
+                        msg.setMessage("无权修改员工类别");
+                        msg.open();
                     }
-                    if (modifiedPassword[0] && auth.mdPass()) {
-                        Main.hr.modifyPass(id, password.getText());
-                    }
+                    return;
                 }
+                if (!salary.getText().equals(initInfo[5])) {
+                    initInfo[5] = salary.getText();
+                    Main.hr.modifySalary(tId, Integer.parseInt(salary.getText()));
+                }
+                if (modifiedPassword[0] && auth.mdPass()) {
+                    Main.hr.modifyPass(tId, password.getText());
+                }
+                if (!rank.getText().equals(initInfo[4]) && auth.mdRank()) {
+                    initInfo[4] = rank.getText();
+                    Main.hr.modifyRank(tId, rank.getText());
+                }
+
+                Func.log("modify " + t.getText() + " " + t.getText(2));
                 t.setText(initInfo);
             }
         });
@@ -345,34 +385,44 @@ public class MainShell {
         position.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (position.getSelectionIndex() == 0) {
+                if (position.getText().equals("经理")) {
                     branch.setText("管理");
-                    rank.setText("经理");
-                } else if (position.getSelectionIndex() == 1) {
+                    rank.setItems(Manager.rank);
+                } else if (position.getText().equals("销售经理")) {
                     branch.setText("销售");
-                    rank.setText("经理");
-                } else if (position.getSelectionIndex() == 2) {
+                    rank.setItems(SalesManager.rank);
+                } else if (position.getText().equals("销售人员")) {
                     branch.setText("销售");
-                    rank.setText("职员");
+                    rank.setItems(SalesClerk.rank);
                 } else {
                     branch.setText("开发");
-                    rank.setItems("P4", "P5", "P6", "P7");
+                    rank.setItems(Technician.rank);
                 }
+                rank.select(0);
             }
         });
         addButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (name.getText().length() == 0) {
+                if (auth.auName().equals("AdminSales") && !branch.getText().equals("销售")) {
+                    MessageBox msg = new MessageBox(Main.mainShell, SWT.ICON_WARNING | SWT.NO | SWT.YES);
+                    msg.setMessage("您只能添加本部门的职员!");
+                    msg.open();
+                }
+                else if (name.getText().length() == 0) {
                     eLabel.setText("姓名不能为空！");
                 } else if (id.getText().length() == 0) {
                     eLabel.setText("工号不能为空！");
+                } else if (gender.getText().length() == 0) {
+                    eLabel.setText("性别不能为空！");
+                } else if (position.getText().length() == 0) {
+                    eLabel.setText("部门职位不能为空！");
                 } else if (salary.getText().length() == 0) {
                     eLabel.setText("工资不能为空！");
-                } else if (!password.getText().equals(nPassword.getText())) {
-                    eLabel.setText("两次输入的密码不相等！");
                 } else if (password.getText().length() == 0) {
                     eLabel.setText("密码不能为空！");
+                } else if (!password.getText().equals(nPassword.getText())) {
+                    eLabel.setText("两次输入的密码不相等！");
                 } else {
                     String info =  name.getText() + " " + gender.getItem(gender.getSelectionIndex()) + " " + id.getText()
                             + " " + branch.getText() + " " +
@@ -389,8 +439,6 @@ public class MainShell {
                 }
             }
         });
-
-
         /*-----------------------个人信息页面-------------------------*/
         if (!auth.auName().equals("SuperUser")) {
             Label $nLabel = new Label(group2, SWT.NONE);
@@ -450,7 +498,6 @@ public class MainShell {
                 }
             }
         });
-
         tabEdit.setControl(group1);
         tabInfo.setControl(group2);
         tabCount.setControl(group3);

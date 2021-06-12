@@ -36,10 +36,10 @@ public class HR {
     protected static String Status = "insert";
     protected static int size = 0;
     protected static TreeMap<Integer, Employee> emp = new TreeMap<>();
+    protected static ArrayList<String> changes = new ArrayList<>();
     public static String[] root;
     public static String[] self;
     public static String name;
-    protected ArrayList<String> changes = new ArrayList<>();
 
     public HR() {}
     /**
@@ -77,43 +77,45 @@ public class HR {
         return res;
     }
     /**
-     * @description: 添加人员
-     *      1.将信息进行分割
-     *      2.查找是否存在
-     *      3.根据人员信息选择不同的类
-     *      4.添加对象
-     * @param: [info]
-     * @return: 是否添加成功
+     * @description: 修改员工类别
+     * @param: [employee, branch, rank, salary, password] 删除后返回的员工，新的部门、职位、工资、密码
+     * @return:
      */
-    public void add(Employee employee) {
-        System.out.println("given " + employee.getClass().getName());
-        Employee e;
-        if(findById(employee.getId()) != null)
-            return;
+    public void restore(Employee employee, String branch, String rank, String salary, String password) {
         size++;
-        String info = employee.getInfo();
-        if (!Status.equals("init"))changes.add(Status + " " + info);
-        String branch = employee.getBranch();
+        String[] args = Func.Split(employee.getInfo());
+        args[3] = branch;
+        args[4] = rank;
+        args[5] = salary;
+        if (!password.isEmpty())args[6] = password;
+        StringBuilder info = new StringBuilder();
+        for (int i = 0; i < 6;i++) {
+            info.append(args[i]).append(" ");
+        }
+        info.append(args[6]);
+        changes.remove(changes.size() - 1);
+        changes.add("update " + info);
+        Employee e;
         if(branch.equals("开发")) {
-            e = new Technician(info);
+            e = new Technician(info.toString());
         } else if(branch.equals("销售")) {
             if (employee.getRank().equals("经理")) {
-                e = new SalesManager(info);
+                e = new SalesManager(info.toString());
             } else {
-                e = new SalesClerk(info);
+                e = new SalesClerk(info.toString());
             }
         } else {
-            e = new Manager(info);
+            e = new Manager(info.toString());
         }
         emp.put(employee.getId(), e);
-        //emp.sort(Comparator.comparingInt(Employee::getId));
     }
+
     public Employee add(String info) {
         Employee e;
         String[] args = Func.Split(info);
         if(findById(Integer.parseInt(args[2])) != null)
             return null;
-        if (!Status.equals("init"))changes.add(Status + " " + info);
+        if (!Status.equals("init")) changes.add(Status + " " + info);
         size++;
         if(args[3].equals("开发")) {
             e = new Technician(info);
@@ -129,8 +131,8 @@ public class HR {
         emp.put(Integer.parseInt(args[2]), e);
         return e;
     }
-    /*
-     * @description:删除员工
+    /**
+     * @description: 删除员工
      *  1、个数减一
      *  2、Employee类和对应类的总数减一
      *  3、将信息保存到changes
@@ -249,22 +251,56 @@ public class HR {
         OutputStream os = new FileOutputStream(fileName);
         PrintWriter pw = new PrintWriter(os);
         pw.println(Func.encrypt(root[0] + " " + root[1]));
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        //2.获取数据库连接
-        Connection connection = DriverManager.getConnection(DB_url, username, password);
-        //3.操作数据库
-        Statement statement = connection.createStatement();//获取操作数据库的对象
-        String sql = "select * from info";//定义数据库语句
         for(Integer id : emp.keySet()) {
             pw.println(Func.encrypt(emp.get(id).getInfo()));
-
         }
-        for (String s : changes) {
-            System.out.println(s);
-        }
-        changes.clear();
         pw.close();
         os.close();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            //2.获取数据库连接
+            Connection connection = DriverManager.getConnection(DB_url, username, password);
+            //3.操作数据库
+            Statement statement = connection.createStatement();//获取操作数据库的对象
+            String sql;//定义数据库语句
+            for (String s : changes) {
+                System.out.println(s);
+                String[] inst = Func.Split(s);
+                if (inst[0].equals("insert")) {
+                    sql = "insert into info(a,b,c,d,e,f,g)value (?,?,?,?,?,?,?)";
+                    PreparedStatement pStmt = connection.prepareStatement(sql);
+                    pStmt.setString(1, inst[1]);
+                    pStmt.setString(2, inst[2]);
+                    pStmt.setString(3, inst[3]);
+                    pStmt.setString(4, inst[4]);
+                    pStmt.setString(5, inst[5]);
+                    pStmt.setString(6, inst[6]);
+                    pStmt.setString(7, inst[7]);
+                    pStmt.executeUpdate();
+                    pStmt.close();
+                } else if (inst[0].equals("update")) {
+                    sql = "update info set d=?, e=?, f=?, g=? where c = '" + inst[3] + "'";
+                    PreparedStatement pStmt = connection.prepareStatement(sql);
+                    pStmt.setString(1, inst[4]);
+                    pStmt.setString(2, inst[5]);
+                    pStmt.setString(3, inst[6]);
+                    pStmt.setString(4, inst[7]);
+                    pStmt.executeUpdate();
+                    pStmt.close();
+                } else {
+                    sql = "delete from info where c='" + inst[3] + "'";
+                    PreparedStatement pStmt = connection.prepareStatement(sql);
+                    pStmt.executeUpdate();
+                    pStmt.close();
+                }
+
+            }
+            statement.close();
+            connection.close();
+            changes.clear();
+        } catch (ClassNotFoundException | SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     public static String getNum() {
@@ -273,4 +309,20 @@ public class HR {
                 Manager.getTotal(), SalesManager.getTotal(), Technician.getTotal(), SalesClerk.getTotal());
     }
 
+    /**
+     * @description: 根据部门职位获取对应的人员全称
+     * @param: [branch, rank]
+     * @return:
+     */
+    public static String getPosition(String branch, String rank) {
+        if (branch.equals("管理")) {
+            return "经理";
+        } else if (branch.equals("开发")) {
+            return "技术人员";
+        } else if (rank.equals("职员")) {
+            return "销售人员";
+        } else {
+            return "销售经理";
+        }
+    }
 }

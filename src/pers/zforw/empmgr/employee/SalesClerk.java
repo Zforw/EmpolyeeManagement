@@ -2,6 +2,8 @@ package pers.zforw.empmgr.employee;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 /**
  * @version: 1.0
  * @author: zforw
@@ -10,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * @description:
  */
 public class SalesClerk extends Employee {
+    public final static String[] rank = {"职员"};
     private static int total = 0;
 
     public SalesClerk(String info) {
@@ -23,4 +26,5 @@ public class SalesClerk extends Employee {
         total--;
         return super.delete();
     }
+
 }

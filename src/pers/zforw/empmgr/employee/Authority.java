@@ -7,5 +7,6 @@ public interface Authority {
     boolean mdPass();
     boolean addEmp();
     boolean saveFe();
+    boolean mdRank();
     String auName();
 }

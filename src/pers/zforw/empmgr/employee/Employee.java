@@ -22,6 +22,14 @@ public class Employee {
     private final String branch;
     private String rank;
 
+    public static int getSelect(String r) {
+        return switch (r) {
+            case "P5" -> 1;
+            case "P6" -> 2;
+            case "P7" -> 3;
+            default -> 0;
+        };
+    }
     public Employee(Employee employee) {
         id = employee.id;
         name = employee.name;
@@ -30,7 +38,6 @@ public class Employee {
         rank = employee.rank;
         salary = employee.salary;
         password = employee.password;
-        System.out.println("Employee.34");
     }
     /*
     public Employee(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
@@ -128,7 +135,6 @@ public class Employee {
 
     protected Employee delete() {
         tot--;
-        HR.Status = "delete";
         return this;
     };
 

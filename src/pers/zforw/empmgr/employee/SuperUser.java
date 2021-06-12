@@ -1,5 +1,7 @@
 package pers.zforw.empmgr.employee;
 
+import pers.zforw.empmgr.main.Func;
+
 /**
  * @version: 1.0
  * @author: zforw
@@ -36,6 +38,11 @@ public class SuperUser extends HR implements Authority {
 
     @Override
     public boolean saveFe() {
+        return true;
+    }
+
+    @Override
+    public boolean mdRank() {
         return true;
     }
 
