@@ -1,6 +1,5 @@
 package pers.zforw.empmgr.employee;
 
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @version: 1.0
@@ -20,7 +19,8 @@ public class SalesManager extends Employee {
     public static int getTotal() {
         return total;
     }
-    public Employee delete() {
+    @Override
+    protected Employee delete() {
         total--;
         return super.delete();
     }

@@ -34,17 +34,15 @@ public class HR {
     static final String password = "zfwixeon";
 
     protected static String Status = "insert";
-    protected static int size = 0;
     protected static TreeMap<Integer, Employee> emp = new TreeMap<>();
     protected static ArrayList<String> changes = new ArrayList<>();
-    public static String[] root;
-    public static String[] self;
+    protected static String[] root;
+    public static Employee self;
     public static String name;
 
     public HR() {}
     /**
-     * @description:
-     *      返回id对应的员工对象
+     * @description: 返回id对应的员工对象
      * @param: [id]
      * @return:
      */
@@ -52,8 +50,8 @@ public class HR {
         if (!emp.containsKey(id)) return null;
         return emp.get(id);
     }
-    /*
-     * @description: 返回和name相似度大于0.15的名字
+    /**
+     * @description: 返回和name相似度大于0.3的名字
      * @param: [name]
      * @return:
      */
@@ -62,27 +60,25 @@ public class HR {
         for (Integer id : emp.keySet()) {
             ArrayList<Employee> list;
             float similarity = Func.levenshtein(emp.get(id).getName(), name);
-            if ((similarity > 0.15)) {
+            if ((similarity > 0.3)) {
                 if (map.containsKey(similarity)) list = map.get(similarity);
                 else list = new ArrayList<>();
                 list.add(emp.get(id));
                 map.put(similarity, list);
             }
         }
-        List<Map.Entry<Float, ArrayList<Employee>>> list = new ArrayList<>(map.entrySet());
         ArrayList<Employee> res = new ArrayList<>();
-        for (Map.Entry<Float, ArrayList<Employee>> e : list) {
+        for (Map.Entry<Float, ArrayList<Employee>> e : map.entrySet()) {
             res.addAll(e.getValue());
         }
         return res;
     }
     /**
      * @description: 修改员工类别
-     * @param: [employee, branch, rank, salary, password] 删除后返回的员工，新的部门、职位、工资、密码
+     * @param: [employee, branch, rank, salary, password] [删除后返回的员工, 新的部门, 职位, 工资, 密码]
      * @return:
      */
     public void restore(Employee employee, String branch, String rank, String salary, String password) {
-        size++;
         String[] args = Func.Split(employee.getInfo());
         args[3] = branch;
         args[4] = rank;
@@ -110,13 +106,17 @@ public class HR {
         emp.put(employee.getId(), e);
     }
 
+    /**
+     * @description:
+     * @param: [info] 员工信息格式:[name, gender, id, branch, rank, salary, password]
+     * @return:
+     */
     public Employee add(String info) {
         Employee e;
         String[] args = Func.Split(info);
         if(findById(Integer.parseInt(args[2])) != null)
             return null;
         if (!Status.equals("init")) changes.add(Status + " " + info);
-        size++;
         if(args[3].equals("开发")) {
             e = new Technician(info);
         } else if(args[3].equals("销售")) {
@@ -133,19 +133,16 @@ public class HR {
     }
     /**
      * @description: 删除员工
-     *  1、个数减一
-     *  2、Employee类和对应类的总数减一
-     *  3、将信息保存到changes
-     *  4、返回删除的Employee
+     *  1、HR size 减一,
+     *  2、调用所在类的delete方法，总数减1，并将信息保存到changes
+     *  3、返回删除的Employee
      * @param: [id]
      * @return:
      */
     public Employee delete(int id) {
-        size--;
         changes.add("delete " + emp.get(id).delete().getInfo());
         return emp.remove(id);
     }
-
     public void modifyRank(int id, String rank) {
         Employee e = emp.get(id);
         e.setRank(rank);
@@ -165,7 +162,7 @@ public class HR {
     public Collection getIter() {
         return emp.values();
     }
-    public int getSize() { return size; }
+    public int getSize() { return emp.size(); }
 
     public static HR Check(String name, String pass) {
         HR h;
@@ -184,7 +181,7 @@ public class HR {
                 } else {
                     h = new User();
                 }
-                self = Func.Split(employee.getInfo());
+                self = employee;
                 HR.name = name;
                 return h;
             }
@@ -207,12 +204,9 @@ public class HR {
                 OutputStream os = new FileOutputStream(fileName);
                 PrintWriter pw = new PrintWriter(os);
                 pw.println(Func.encrypt("su 123"));
-                //1.注册JDBC驱动
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                //2.获取数据库连接
-                Connection connection = DriverManager.getConnection(DB_url, username, password);
-                //3.操作数据库
-                Statement statement = connection.createStatement();//获取操作数据库的对象
+                Class.forName("com.mysql.cj.jdbc.Driver");//1.注册JDBC驱动
+                Connection connection = DriverManager.getConnection(DB_url, username, password);//2.获取数据库连接
+                Statement statement = connection.createStatement();//3.操作数据库
                 String sql = "select * from info";//定义数据库语句
                 ResultSet resultSet = statement.executeQuery(sql);//执行数据库语句获取结果集
                 while (resultSet.next()) {
@@ -228,7 +222,7 @@ public class HR {
                 resultSet.close();
                 statement.close();
                 connection.close();
-            }catch (ClassNotFoundException | SQLException exception) {
+            }catch (ClassNotFoundException | IOException | SQLException exception) {
                 exception.printStackTrace();
             }
         }
@@ -248,8 +242,9 @@ public class HR {
      * @return:
      */
     public void saveFile(String fileName) throws IOException, SQLException, ClassNotFoundException {
+        if (changes.size() == 0) return;//如果没有改变就直接退出
         OutputStream os = new FileOutputStream(fileName);
-        PrintWriter pw = new PrintWriter(os);
+        PrintWriter pw = new PrintWriter(os);//覆盖原文件
         pw.println(Func.encrypt(root[0] + " " + root[1]));
         for(Integer id : emp.keySet()) {
             pw.println(Func.encrypt(emp.get(id).getInfo()));
@@ -258,11 +253,9 @@ public class HR {
         os.close();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            //2.获取数据库连接
             Connection connection = DriverManager.getConnection(DB_url, username, password);
-            //3.操作数据库
-            Statement statement = connection.createStatement();//获取操作数据库的对象
-            String sql;//定义数据库语句
+            Statement statement = connection.createStatement();
+            String sql;
             for (String s : changes) {
                 System.out.println(s);
                 String[] inst = Func.Split(s);
@@ -293,11 +286,10 @@ public class HR {
                     pStmt.executeUpdate();
                     pStmt.close();
                 }
-
             }
             statement.close();
             connection.close();
-            changes.clear();
+            changes.clear();//点击保存后清除之前的记录
         } catch (ClassNotFoundException | SQLException exception) {
             exception.printStackTrace();
         }
@@ -309,6 +301,7 @@ public class HR {
                 Manager.getTotal(), SalesManager.getTotal(), Technician.getTotal(), SalesClerk.getTotal());
     }
 
+    public void modifyRootPass(String pass) {}
     /**
      * @description: 根据部门职位获取对应的人员全称
      * @param: [branch, rank]

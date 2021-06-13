@@ -1,6 +1,5 @@
 package pers.zforw.empmgr.employee;
 
-import org.jetbrains.annotations.NotNull;
 import pers.zforw.empmgr.main.Func;
 
 /**
@@ -30,34 +29,7 @@ public class Employee {
             default -> 0;
         };
     }
-    public Employee(Employee employee) {
-        id = employee.id;
-        name = employee.name;
-        gender = employee.gender;
-        branch = employee.branch;
-        rank = employee.rank;
-        salary = employee.salary;
-        password = employee.password;
-    }
-    /*
-    public Employee(String name, @NotNull String gender, int id, String branch, String rank, int salary, String password) {
-        this.name = name;
-        this.gender = gender;
-        this.id = id;
-        this.branch = branch;
-        this.rank = rank;
-        this.salary = salary;
-        this.password = password;
-        this.status = "insert";
-        tot++;
-        if (gender.equals("男")) {
-            male++;
-        } else {
-            female++;
-        }
-    }
 
-     */
     public Employee(String info) {
         String[] array = Func.Split(info);
         this.name = array[0];
@@ -74,7 +46,6 @@ public class Employee {
         this.salary = Integer.parseInt(array[5]);
         this.password = array[6];
     }
-
 
     protected String getInfo() {
         return String.format("%s %s %s %s %s %s %s", name, gender, id, branch, rank, salary, password);

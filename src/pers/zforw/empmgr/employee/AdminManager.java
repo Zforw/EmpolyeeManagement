@@ -18,8 +18,8 @@ public class AdminManager extends HR implements Authority {
             return null;
         return super.delete(id);
     }
+    @Override
     public void restore(Employee employee, String branch, String rank, String salary, String password) {
-        HR.size++;
         String[] args = Func.Split(employee.getInfo());
         args[3] = branch;
         args[4] = rank;

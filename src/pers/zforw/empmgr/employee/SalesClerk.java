@@ -1,8 +1,5 @@
 package pers.zforw.empmgr.employee;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 /**
  * @version: 1.0
@@ -22,6 +19,7 @@ public class SalesClerk extends Employee {
     public static int getTotal() {
         return total;
     }
+    @Override
     public Employee delete() {
         total--;
         return super.delete();

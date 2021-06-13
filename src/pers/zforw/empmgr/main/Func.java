@@ -1,5 +1,7 @@
 package pers.zforw.empmgr.main;
 
+import jdk.jfr.Unsigned;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,7 +17,7 @@ import java.util.Date;
  * @author: zforw
  * @date: 2021/05/22 3:53 下午
  * @project: Basic
- * @description:
+ * @description: 这个类提供了一系列需要用到的函数
  */
 public class Func {
 
@@ -30,7 +32,7 @@ public class Func {
         return df.format(date);
     }
     /**
-     * @description: 在日志中追加信息
+     * @description: 将信息添加到系统日志中
      * @param: [content]
      * @return: void
      */
@@ -86,7 +88,6 @@ public class Func {
     public static String[] Split(String str) {
         String[] result = str.split(" ");
         for (int i = 0; i < result.length; i++) {
-            /*  */
             if (result[i].length() == 0 && i < result.length - 1) {
                 String t = result[i];
                 result[i] = result[i + 1];
@@ -96,7 +97,7 @@ public class Func {
         return result;
     }
 
-    /*
+    /**
      * @description: 创建目录
      * @param: [fileDir]
      * @return:
@@ -105,20 +106,20 @@ public class Func {
         File file = new File(fileDir);
         //如果文件夹不存在则创建
         if (!file.exists() && !file.isDirectory()) {
-            System.out.println("//不存在");
-            file.mkdirs();
+            System.out.println("文件夹不存在");
+            boolean flag = file.mkdirs();
         }
     }
 
 
-    /*
+    /**
      * @description: 将字符串转换为一个大整数
      * @param: [msg]
      * @return:
      */
     public static String encrypt(String msg) throws UnsupportedEncodingException {
         msg = java.net.URLEncoder.encode(msg,"GBK");
-        byte[] text = msg.getBytes("GBK");//将字符串转换成byte类型数组，实质是各个字符的二进制形式
+        byte[] text = msg.getBytes("GBK");//将字符串转换成byte类型数组，即各字符的二进制形式
         for (int i = 0;i < text.length;i++) {
             text[i] += 23;//偏移
         }
@@ -126,14 +127,14 @@ public class Func {
         return m.toString();
     }
 
-    /*
+    /**
      * @description: 解密函数
      * @param: [encoded]
      * @return:
      */
     public static String decrypt(String encoded) throws UnsupportedEncodingException {
         BigInteger m = new BigInteger(encoded);//二进制串转换为一个大整数
-        byte[] mt = m.toByteArray();//m为密文的BigInteger类型
+        byte[] mt = m.toByteArray();//mt为密文的BigInteger类型
         for (int i = 0; i < mt.length;i++) {
             mt[i] -= 23;
         }
@@ -142,40 +143,28 @@ public class Func {
         return str;
     }
 
-    /*
-     * @description: 计算两个字符串之间的相似度
-     * @param: [str1, str2]
-     * @return:
+    /**
+     * @description: 计算两个字符串之间的相似度, 由src转换成dst所需的最少编辑操作次数
+     * @param: [src, dst]
+     * @return: src与dst的相似度
      */
-    public static float levenshtein(String str1, String str2) {
-        int len1 = str1.length();
-        int len2 = str2.length();
-        //建立数组
-        int[][] dif = new int[len1 + 1][len2 + 1];
-        //赋初值
-        for (int a = 0; a <= len1; a++) {
-            dif[a][0] = a;
+    public static float levenshtein(String src, String dst) {
+        int len1 = src.length();
+        int len2 = dst.length();
+        if (len1 == 0 || len2 == 0) return 0;
+        int[] v0 = new int[len2 + 1];
+        int[] v1 = new int[len2 + 1];
+        for (int i = 0;i < v0.length;i++) {
+            v0[i] = i;
         }
-        for (int a = 0; a <= len2; a++) {
-            dif[0][a] = a;
-        }
-        //计算两个字符是否一样，计算左上的值
-        int temp;
-        for (int i = 1; i <= len1; i++) {
-            for (int j = 1; j <= len2; j++) {
-                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                    temp = 0;
-                } else {
-                    temp = 1;
-                }
-                //取三个值中最小的
-                dif[i][j] = Math.min(Math.min(dif[i - 1][j - 1] + temp, dif[i][j - 1] + 1),
-                        dif[i - 1][j] + 1);
+        for (int i = 0;i < len1;i++) {
+            v1[0] = i + 1;
+            for (int j = 0; j < len2;j++) {
+                int cost = (src.charAt(i) == dst.charAt(j)) ? 0 : 1;
+                v1[j + 1] = Math.min(v1[j] + 1, Math.min(v0[j + 1] + 1, v0[j] + cost));
             }
+            System.arraycopy(v1, 0, v0, 0, v0.length);
         }
-        //取数组右下角的值，同样不同位置代表不同字符串的比较，差异步骤：dif[len1][len2]);
-        //计算相似度
-        return 1 - (float) dif[len1][len2] / Math.max(str1.length(), str2.length());
+        return 1 - (float) v1[len2] / Math.max(len1, len2);
     }
-
 }

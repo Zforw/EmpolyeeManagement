@@ -1,7 +1,5 @@
 package pers.zforw.empmgr.employee;
 
-import pers.zforw.empmgr.main.Func;
-
 /**
  * @version: 1.0
  * @author: zforw
@@ -11,6 +9,10 @@ import pers.zforw.empmgr.main.Func;
  */
 public class SuperUser extends HR implements Authority {
 
+    @Override
+    public void modifyRootPass(String pass) {
+        root[1] = pass;
+    }
     @Override
     public boolean delete() {
         return true;

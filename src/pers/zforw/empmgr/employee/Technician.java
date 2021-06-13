@@ -1,7 +1,5 @@
 package pers.zforw.empmgr.employee;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @version: 1.0
  * @author: zforw
@@ -21,6 +19,7 @@ public class Technician extends Employee {
     public static int getTotal() {
         return total;
     }
+    @Override
     public Employee delete() {
         total--;
         return super.delete();

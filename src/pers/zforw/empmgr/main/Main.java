@@ -28,6 +28,8 @@ public class Main {
     protected static String OS;
 
     public static void main(String[] args) throws IOException {
+        System.out.println(Func.levenshtein("hamchenoonan", "hamchenin"));
+
         OS = System.getProperty("os.name").toLowerCase();
         if(OS.indexOf("windows") > 0) {
             filePath = "C:\\";

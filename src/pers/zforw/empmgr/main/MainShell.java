@@ -64,7 +64,6 @@ public class MainShell {
             }
         });
 
-
         Button findButton = new Button(group1, SWT.NONE);
         Button saveButton = new Button(group1, SWT.NONE);
         Button deleteButton = new Button(group1, SWT.NONE);
@@ -249,11 +248,6 @@ public class MainShell {
             }
         });
         String[] initInfo = new String[6];
-        /*
-         * @description: 
-         * @param: []
-         * @return: 
-         */
         table.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -292,15 +286,7 @@ public class MainShell {
         });
 
         final boolean[] modifiedPassword = {false};
-
         password.addModifyListener(modifyEvent -> modifiedPassword[0] = true);
-
-
-        /*
-         * @description: 
-         * @param: []
-         * @return: 
-         */
         modifyButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -312,7 +298,8 @@ public class MainShell {
                     msg.open();
                     return;
                 }
-                if (!name.getText().equals(initInfo[0]) || !gender.getText().equals(initInfo[1]) || !id.getText().equals(initInfo[2]))
+                if (!name.getText().equals(initInfo[0]) || !gender.getText().equals(initInfo[1]) ||
+                        !id.getText().equals(initInfo[2]))
                 {
                     msg.setMessage("不可修改姓名、性别、工号！");
                     msg.open();
@@ -334,7 +321,6 @@ public class MainShell {
                     return;
                 }
                 TableItem t = table.getItem(table.getSelectionIndex());
-
                 msg.setMessage("是否要修改 " + t.getText());
                 int rc = msg.open();
                 if (rc != SWT.YES) {
@@ -442,22 +428,22 @@ public class MainShell {
         /*-----------------------个人信息页面-------------------------*/
         if (!auth.auName().equals("SuperUser")) {
             Label $nLabel = new Label(group2, SWT.NONE);
-            $nLabel.setText("姓名:\t\t\t" + HR.self[0]);
+            $nLabel.setText("姓名:\t\t\t" + HR.self.getName());
             $nLabel.setBounds(20, 20, 190, 20);
             Label $gLabel = new Label(group2, SWT.NONE);
-            $gLabel.setText("性别:\t\t\t" + HR.self[1]);
+            $gLabel.setText("性别:\t\t\t" + HR.self.getGender());
             $gLabel.setBounds(20, 50, 190, 20);
             Label $iLabel = new Label(group2, SWT.NONE);
-            $iLabel.setText("工号:\t\t\t" + HR.self[2]);
+            $iLabel.setText("工号:\t\t\t" + HR.self.getId());
             $iLabel.setBounds(20, 80, 190, 20);
             Label $bLabel = new Label(group2, SWT.NONE);
-            $bLabel.setText("部门:\t\t\t" + HR.self[3]);
+            $bLabel.setText("部门:\t\t\t" + HR.self.getBranch());
             $bLabel.setBounds(20, 110, 190, 20);
             Label $rLabel = new Label(group2, SWT.NONE);
-            $rLabel.setText("级别:\t\t\t" + HR.self[4]);
+            $rLabel.setText("级别:\t\t\t" + HR.self.getRank());
             $rLabel.setBounds(20, 140, 190, 20);
             Label $sLabel = new Label(group2, SWT.NONE);
-            $sLabel.setText("工资:\t\t\t" + HR.self[5]);
+            $sLabel.setText("工资:\t\t\t" + HR.self.getSalary());
             $sLabel.setBounds(20, 170, 190, 20);
         } else {
             Label $nLabel = new Label(group2, SWT.NONE);
@@ -491,9 +477,9 @@ public class MainShell {
                 } else {
                     $eLabel.setText("修改成功");
                     if (auth.auName().equals("SuperUser")) {
-                        HR.root[1] = $password.getText();
+                        Main.hr.modifyRootPass($password.getText());
                     } else {
-                        Main.hr.modifyPass(Integer.parseInt(HR.self[2]), $password.getText());
+                        Main.hr.modifyPass(HR.self.getId(), $password.getText());
                     }
                 }
             }
