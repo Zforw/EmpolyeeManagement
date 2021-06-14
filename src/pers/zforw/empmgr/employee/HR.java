@@ -35,7 +35,7 @@ public class HR {
 
     protected static String Status = "insert";
     protected static TreeMap<Integer, Employee> emp = new TreeMap<>();
-    protected static ArrayList<String> changes = new ArrayList<>();
+    protected static ArrayList<String> changelist = new ArrayList<>();
     protected static String[] root;
     public static Employee self;
     public static String name;
@@ -89,8 +89,8 @@ public class HR {
             info.append(args[i]).append(" ");
         }
         info.append(args[6]);
-        changes.remove(changes.size() - 1);
-        changes.add("update " + info);
+        changelist.remove(changelist.size() - 1);
+        changelist.add("update " + info);
         Employee e;
         if(branch.equals("开发")) {
             e = new Technician(info.toString());
@@ -116,7 +116,7 @@ public class HR {
         String[] args = Func.Split(info);
         if(findById(Integer.parseInt(args[2])) != null)
             return null;
-        if (!Status.equals("init")) changes.add(Status + " " + info);
+        if (!Status.equals("init")) changelist.add(Status + " " + info);
         if(args[3].equals("开发")) {
             e = new Technician(info);
         } else if(args[3].equals("销售")) {
@@ -140,23 +140,23 @@ public class HR {
      * @return:
      */
     public Employee delete(int id) {
-        changes.add("delete " + emp.get(id).delete().getInfo());
+        changelist.add("delete " + emp.get(id).delete().getInfo());
         return emp.remove(id);
     }
     public void modifyRank(int id, String rank) {
         Employee e = emp.get(id);
         e.setRank(rank);
-        changes.add(Status + " " + e.getInfo());
+        changelist.add("update " + e.getInfo());
     }
     public void modifySalary(int id, int salary) {
         Employee e = emp.get(id);
         e.setSalary(salary);
-        changes.add(Status + " " + e.getInfo());
+        changelist.add("update " + e.getInfo());
     }
     public void modifyPass(int id, String pass) {
         Employee e = emp.get(id);
         e.setPassword(pass);
-        changes.add(Status + " " + e.getInfo());
+        changelist.add("update " + e.getInfo());
     }
 
     public Collection getIter() {
@@ -257,7 +257,7 @@ public class HR {
      * @return:
      */
     public void saveFile(String fileName) throws IOException, SQLException, ClassNotFoundException {
-        if (changes.size() == 0) return;//如果没有改变就直接退出
+        if (changelist.size() == 0) return;//如果没有改变就直接退出
         OutputStream os = new FileOutputStream(fileName);
         PrintWriter pw = new PrintWriter(os);//覆盖原文件
         pw.println(Func.encrypt(root[0] + " " + root[1]));
@@ -271,7 +271,7 @@ public class HR {
             Connection connection = DriverManager.getConnection(DB_url, username, password);
             Statement statement = connection.createStatement();
             String sql;
-            for (String s : changes) {
+            for (String s : changelist) {
                 System.out.println(s);
                 String[] inst = Func.Split(s);
                 if (inst[0].equals("insert")) {
@@ -304,7 +304,7 @@ public class HR {
             }
             statement.close();
             connection.close();
-            changes.clear();//点击保存后清除之前的记录
+            changelist.clear();//点击保存后清除之前的记录
         } catch (ClassNotFoundException | SQLException exception) {
             exception.printStackTrace();
         }

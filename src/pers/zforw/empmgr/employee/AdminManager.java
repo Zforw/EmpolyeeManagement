@@ -29,8 +29,8 @@ public class AdminManager extends HR implements Authority {
             info.append(args[i]).append(" ");
         }
         info.append(args[6]);
-        HR.changes.remove(changes.size() - 1);
-        HR.changes.add(Status + " " + info);
+        HR.changelist.remove(changelist.size() - 1);
+        HR.changelist.add("update " + info);
         Employee e;
         if(branch.equals("开发")) {
             e = new Technician(info.toString());

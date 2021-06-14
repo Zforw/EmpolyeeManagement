@@ -53,17 +53,14 @@ public class Employee {
 
     protected void setSalary(int salary) {
         this.salary = salary;
-        HR.Status = "update";
     }
 
     protected void setPassword(String password) {
         this.password = password;
-        HR.Status = "update";
     }
 
     protected void setRank(String rank) {
         this.rank = rank;
-        HR.Status = "update";
     }
 
     public static int getMale() {
