@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -16,7 +15,7 @@ import java.sql.SQLException;
  * @date: 2021/05/27 7:07 下午
  * @project: EmpMgr
  * @description: 公司员工管理系统
- * java -XstartOnFirstThread -jar xxx.jar
+ * command: java -XstartOnFirstThread -jar xxx.jar
  */
 public class Main {
     public static HR hr = new HR();
@@ -28,7 +27,6 @@ public class Main {
     protected static String OS;
 
     public static void main(String[] args) throws IOException {
-        System.out.println(Func.levenshtein("hamchenoonan", "hamchenin"));
 
         OS = System.getProperty("os.name").toLowerCase();
         if(OS.indexOf("windows") > 0) {

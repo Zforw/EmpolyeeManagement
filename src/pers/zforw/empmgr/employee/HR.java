@@ -3,11 +3,14 @@ import pers.zforw.empmgr.main.Func;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.rmi.UnexpectedException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -188,7 +191,38 @@ public class HR {
         }
         return null;
     }
-
+    /**
+     * @description: 从数据库加载数据覆盖本地数据文件
+     * @param: [fileName]
+     * @return:
+     */
+    private void loadDatabase(String fileName) {
+        try{
+            OutputStream os = new FileOutputStream(fileName);
+            PrintWriter pw = new PrintWriter(os);
+            pw.println(Func.encrypt("su 123"));
+            Class.forName("com.mysql.cj.jdbc.Driver");//1.注册JDBC驱动
+            Connection connection = DriverManager.getConnection(DB_url, username, password);//2.获取数据库连接
+            Statement statement = connection.createStatement();//3.操作数据库
+            String sql = "select * from info";//定义数据库语句
+            ResultSet resultSet = statement.executeQuery(sql);//执行数据库语句获取结果集
+            while (resultSet.next()) {
+                String info = resultSet.getString(1) + " " + resultSet.getString(2) +
+                        " " + resultSet.getString(3) + " " + resultSet.getString(4) +
+                        " " + resultSet.getString(5) + " " + resultSet.getString(6) +
+                        " " + resultSet.getString(7);
+                pw.println(Func.encrypt(info));
+            }
+            pw.close();
+            os.close();
+            resultSet.close();
+            statement.close();
+            connection.close();
+            //4.关闭结果集，数据库操作对象，数据库连接
+        }catch (ClassNotFoundException | IOException | SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
     /**
      * @description:
      * @param: [fileName]
@@ -200,40 +234,24 @@ public class HR {
             file.createNewFile();
             Func.log("data file lost, create from database");
             root = new String[]{"su", "123"};
-            try {
-                OutputStream os = new FileOutputStream(fileName);
-                PrintWriter pw = new PrintWriter(os);
-                pw.println(Func.encrypt("su 123"));
-                Class.forName("com.mysql.cj.jdbc.Driver");//1.注册JDBC驱动
-                Connection connection = DriverManager.getConnection(DB_url, username, password);//2.获取数据库连接
-                Statement statement = connection.createStatement();//3.操作数据库
-                String sql = "select * from info";//定义数据库语句
-                ResultSet resultSet = statement.executeQuery(sql);//执行数据库语句获取结果集
-                while (resultSet.next()) {
-                    String info = resultSet.getString(1) + " " + resultSet.getString(2) +
-                            " " + resultSet.getString(3) + " " + resultSet.getString(4) +
-                            " " + resultSet.getString(5) + " " + resultSet.getString(6) +
-                            " " + resultSet.getString(7);
-                    pw.println(Func.encrypt(info));
-                }
-                pw.close();
-                os.close();
-                //4.关闭结果集，数据库操作对象，数据库连接
-                resultSet.close();
-                statement.close();
-                connection.close();
-            }catch (ClassNotFoundException | IOException | SQLException exception) {
-                exception.printStackTrace();
-            }
+            loadDatabase(fileName);
         }
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
-        Status = "init";
-        root = Func.Split(Func.decrypt(br.readLine()));
-        while ((line = br.readLine()) != null) {
-            Employee e = add(Func.decrypt(line));
+        try {
+            Status = "init";
+            root = Func.Split(Func.decrypt(br.readLine()));
+            while ((line = br.readLine()) != null) {
+                add(Func.decrypt(line));
+            }
+            Status = "insert";
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException | UnsupportedEncodingException exception) {
+            //文件损坏则从数据库加载
+            emp.clear();
+            Func.log("file damaged, create from database");
+            loadDatabase(fileName);
+            loadFile(fileName);
         }
-        Status = "insert";
         br.close();
     }
     /**
