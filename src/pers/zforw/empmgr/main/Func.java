@@ -142,7 +142,7 @@ public class Func {
     }
 
     /**
-     * @description: 计算两个字符串之间的相似度, 由src转换成dst所需的最少编辑操作次数
+     * @description: 计算两个字符串之间的相似度, v1[len2] := 由src转换成dst所需的最少编辑操作次数
      * @param: [src, dst]
      * @return: src与dst的相似度
      */
@@ -155,6 +155,7 @@ public class Func {
         for (int i = 0;i < v0.length;i++) {
             v0[i] = i;
         }
+
         for (int i = 0;i < len1;i++) {
             v1[0] = i + 1;
             for (int j = 0; j < len2;j++) {

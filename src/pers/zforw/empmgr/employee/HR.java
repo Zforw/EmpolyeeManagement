@@ -221,11 +221,11 @@ public class HR {
         }
     }
     /**
-     * @description:
+     * @description: 从文件加载数据
      * @param: [fileName]
      * @return:
      */
-    public void loadFile(String fileName) throws IOException{
+    public void loadFile(String fileName) throws IOException {
         File file = new File(fileName);
         if(!file.exists()) {
             file.createNewFile();
@@ -245,14 +245,14 @@ public class HR {
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException | UnsupportedEncodingException exception) {
             //文件损坏则从数据库加载
             emp.clear();
-            Func.log("file damaged, create from database");
+            Func.log("data file damaged, create from database");
             loadDatabase(fileName);
             loadFile(fileName);
         }
         br.close();
     }
     /**
-     * @description:
+     * @description: 将数据保存到文件并更新数据库
      * @param: [fileName]
      * @return:
      */

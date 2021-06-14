@@ -26,7 +26,7 @@ public class Main {
     protected static String filePath = "/Users/zforw/IdeaProjects/Basic/src/";
     protected static String OS;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         OS = System.getProperty("os.name").toLowerCase();
         if(OS.indexOf("windows") > 0) {

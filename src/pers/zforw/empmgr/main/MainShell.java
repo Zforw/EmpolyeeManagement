@@ -417,7 +417,7 @@ public class MainShell {
                     MessageBox msg = new MessageBox(Main.mainShell, SWT.YES | SWT.ICON_INFORMATION);
                     if (p != null) {
                         msg.setMessage("添加成功！");
-                        Func.log("add " + info);
+                        Func.log("add " + name.getText() + " " + id.getText());
                     } else {
                         msg.setMessage("工号重复！");
                     }
