@@ -1637,4 +1637,33 @@
 [2021-06-14 21:24:06]store file data.txt
 [2021-06-14 21:24:25]data file damaged, create from database
 [2021-06-14 21:24:25]load file data.txt
-[2021-06-14 21:24:31]store file data.txt
+[2021-06-14 21:24:31]store file data.txt[2021-06-15 08:50:13]load file data.txt
+[2021-06-15 08:50:17]su logged in
+[2021-06-15 08:50:53]add 温义 20
+[2021-06-15 08:50:58]su logged out
+[2021-06-15 08:50:59]store file data.txt
+[2021-06-15 08:58:23]data file lost, create from database
+[2021-06-15 08:58:24]load file data.txt
+[2021-06-15 08:58:27]store file data.txt
+[2021-06-15 10:58:52]load file data.txt
+[2021-06-15 10:58:59]su logged in
+[2021-06-15 10:59:14]delete 郁盛 35
+[2021-06-15 10:59:44]find 信
+[2021-06-15 10:59:54]su logged out
+[2021-06-15 10:59:55]store file data.txt
+[2021-06-15 10:59:58]load file data.txt
+[2021-06-15 11:00:10]包谦 logged in
+[2021-06-15 11:00:47]modify 荣瑞 14
+[2021-06-15 11:00:57]包谦 logged out
+[2021-06-15 11:00:57]store file data.txt
+[2021-06-15 11:01:04]load file data.txt
+[2021-06-15 11:01:17]万影 logged in
+[2021-06-15 11:01:28]万影 logged out
+[2021-06-15 11:01:28]store file data.txt
+[2021-06-15 11:01:43]data file lost, create from database
+[2021-06-15 11:01:43]load file data.txt
+[2021-06-15 11:01:52]store file data.txt
+[2021-06-15 16:42:52]load file data.txt
+[2021-06-15 16:43:23]su logged in
+[2021-06-15 16:44:47]su logged out
+[2021-06-15 16:44:47]store file data.txt

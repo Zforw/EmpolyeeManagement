@@ -51,6 +51,7 @@ public class MainShell {
         Group group3 = new Group(folder, SWT.NONE);
         Label countLabel = new Label(group3, SWT.NONE);
         countLabel.setBounds(200, 100, 200, 80);
+        /* 选中统计选项卡时，更新统计信息 */
         folder.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
@@ -153,6 +154,7 @@ public class MainShell {
         Label eLabel = new Label(group1, SWT.NONE);
         eLabel.setBounds(10, 270, 120, 20);
 
+        /* 设定输入框的最大字符限制 */
         id.addVerifyListener(verifyEvent -> verifyEvent.doit = id.getText().length() < maxId);
         salary.addVerifyListener(verifyEvent -> verifyEvent.doit = salary.getText().length() < maxSalary);
         password.addVerifyListener(verifyEvent -> verifyEvent.doit = password.getText().length() < maxPass);
@@ -166,9 +168,7 @@ public class MainShell {
         id.addVerifyListener(digit);
         salary.addVerifyListener(digit);
 
-        /*
-         *  根据权限决定显示哪些按钮
-         */
+        /* 根据权限决定显示哪些按钮 */
         deleteButton.setVisible(auth.delete());
         addButton.setVisible(auth.addEmp());
         modifyButton.setVisible(auth.modify());
@@ -205,7 +205,7 @@ public class MainShell {
                         table.removeAll();
                         for(Employee employee : findList) {
                             TableItem item = new TableItem(table, SWT.NONE);
-                            item.setText(new String[]{employee.getName(), employee.getGender(),String.valueOf(employee.getId()),
+                            item.setText(new String[]{employee.getName(), employee.getGender(), String.valueOf(employee.getId()),
                                     employee.getBranch(), employee.getRank(), String.valueOf(employee.getSalary())});
                         }
                     }
@@ -274,7 +274,6 @@ public class MainShell {
                     //position.setText("销售经理");
                     rank.setItems(SalesManager.rank);
                 }
-
                 salary.removeVerifyListener(digit);
                 salary.setText(t.getText(5));
                 salary.addVerifyListener(digit);
@@ -357,7 +356,7 @@ public class MainShell {
                 t.setText(initInfo);
             }
         });
-
+        /* lambda表达式 */
         nPassword.addModifyListener(modifyEvent -> {
             if (password.getText().length() == 0) {
                 eLabel.setText("密码不能为空");
@@ -411,8 +410,7 @@ public class MainShell {
                     eLabel.setText("两次输入的密码不相等！");
                 } else {
                     String info =  name.getText() + " " + gender.getItem(gender.getSelectionIndex()) + " " + id.getText()
-                            + " " + branch.getText() + " " +
-                            rank.getText() + " " + salary.getText() + " " + password.getText();
+                            + " " + branch.getText() + " " + rank.getText() + " " + salary.getText() + " " + password.getText();
                     Employee p = Main.hr.add(info);
                     MessageBox msg = new MessageBox(Main.mainShell, SWT.YES | SWT.ICON_INFORMATION);
                     if (p != null) {

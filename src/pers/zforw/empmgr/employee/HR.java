@@ -42,9 +42,9 @@ public class HR {
 
     public HR() {}
     /**
-     * @description: 返回id对应的员工对象
+     * @description:
      * @param: [id]
-     * @return:
+     * @return: 返回id对应的员工对象, 如果没找到返回null
      */
     public Employee findById(int id) {
         if (!emp.containsKey(id)) return null;
@@ -56,7 +56,7 @@ public class HR {
      * @return:
      */
     public ArrayList<Employee> findByName(String name) {
-        Map<Float, ArrayList<Employee>> map = new HashMap<>();
+        Map<Float, ArrayList<Employee>> map = new HashMap<>();//同一相似度
         for (Integer id : emp.keySet()) {
             ArrayList<Employee> list;
             float similarity = Func.levenshtein(emp.get(id).getName(), name);
@@ -197,6 +197,7 @@ public class HR {
         try{
             OutputStream os = new FileOutputStream(fileName);
             PrintWriter pw = new PrintWriter(os);
+            root = new String[]{"su", "123"};
             pw.println(Func.encrypt("su 123"));
             Class.forName("com.mysql.cj.jdbc.Driver");//1.注册JDBC驱动
             Connection connection = DriverManager.getConnection(DB_url, username, password);//2.获取数据库连接
@@ -230,7 +231,7 @@ public class HR {
         if(!file.exists()) {
             file.createNewFile();
             Func.log("data file lost, create from database");
-            root = new String[]{"su", "123"};
+            root = new String[]{"su", "123"};//默认密码
             loadDatabase(fileName);
         }
         BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -242,6 +243,7 @@ public class HR {
                 add(Func.decrypt(line));
             }
             Status = "insert";
+            //先将Status记录为'初始化'，再记录为'添加'
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException | UnsupportedEncodingException exception) {
             //文件损坏则从数据库加载
             emp.clear();
@@ -260,9 +262,9 @@ public class HR {
         if (changelist.size() == 0) return;//如果没有改变就直接退出
         OutputStream os = new FileOutputStream(fileName);
         PrintWriter pw = new PrintWriter(os);//覆盖原文件
-        pw.println(Func.encrypt(root[0] + " " + root[1]));
+        pw.println(Func.encrypt(root[0] + " " + root[1]));//输出超级用户账号密码
         for(Integer id : emp.keySet()) {
-            pw.println(Func.encrypt(emp.get(id).getInfo()));
+            pw.println(Func.encrypt(emp.get(id).getInfo()));//输出每个员工的信息
         }
         pw.close();
         os.close();
@@ -271,9 +273,11 @@ public class HR {
             Connection connection = DriverManager.getConnection(DB_url, username, password);
             Statement statement = connection.createStatement();
             String sql;
+            /* 根据changelist更新数据库 */
             for (String s : changelist) {
                 System.out.println(s);
                 String[] inst = Func.Split(s);
+                /* 添加员工 */
                 if (inst[0].equals("insert")) {
                     sql = "insert into info(a,b,c,d,e,f,g)value (?,?,?,?,?,?,?)";
                     PreparedStatement pStmt = connection.prepareStatement(sql);
@@ -287,6 +291,7 @@ public class HR {
                     pStmt.executeUpdate();
                     pStmt.close();
                 } else if (inst[0].equals("update")) {
+                    /* 修改员工 */
                     sql = "update info set d=?, e=?, f=?, g=? where c = '" + inst[3] + "'";
                     PreparedStatement pStmt = connection.prepareStatement(sql);
                     pStmt.setString(1, inst[4]);
@@ -296,6 +301,7 @@ public class HR {
                     pStmt.executeUpdate();
                     pStmt.close();
                 } else {
+                    /* 删除员工 */
                     sql = "delete from info where c='" + inst[3] + "'";
                     PreparedStatement pStmt = connection.prepareStatement(sql);
                     pStmt.executeUpdate();
